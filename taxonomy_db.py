@@ -40,7 +40,7 @@ class TaxonomicDatabase:
             print("Database connection closed.")
     
     def execute_sql(self, sql_query, params=None, commit=True):
-        """Execute SQL query and optionally commit changes."""
+    #Execute SQL query and optionally commit changes.#
         try:
             if not self.connection or self.connection.closed:
                 self.connect()
@@ -61,12 +61,39 @@ class TaxonomicDatabase:
                 # No results to fetch (e.g., for INSERT/UPDATE/DELETE)
                 return None
         except Exception as e:
-            self.connection.rollback()
+            if self.connection and not self.connection.closed:
+                self.connection.rollback()
             print(f"Error executing SQL: {e}")
             print(f"Query: {sql_query}")
             if params:
                 print(f"Params: {params}")
             raise
+    
+    def get_taxonomic_rank_items(self, rank, parent_rank=None, parent_id=None):
+    #Get items for a specific taxonomic rank, optionally filtered by parent.#
+    # Dictionary mapping ranks to their table names
+        RANK_TO_TABLE = {
+            'domain': 'domains',
+            'kingdom': 'kingdoms',
+            'phylum': 'phyla',
+            'class': 'classes',
+            'order': 'orders',
+            'family': 'families',
+            'genus': 'genera',  # Another irregular plural
+            'species': 'species'  # 'species' is both singular and plural
+        }
+        
+        if rank not in RANK_TO_TABLE:
+            return []
+        
+        table_name = RANK_TO_TABLE[rank]
+        
+        if parent_rank and parent_id:
+            query = f"SELECT * FROM {table_name} WHERE {parent_rank}_id = %s"
+            return self.execute_sql(query, [parent_id])
+        else:
+            query = f"SELECT * FROM {table_name}"
+            return self.execute_sql(query)
     
     def create_schema(self):
         """Create the complete taxonomic database schema."""
@@ -373,6 +400,8 @@ class TaxonomicDatabase:
         query = """
         SELECT 
             s.id as species_id, s.name as species_name, s.common_name,
+            s.description, s.image_url, s.discovery_year, s.conservation_status,
+            s.habitat, s.geographic_distribution,
             g.id as genus_id, g.name as genus_name,
             f.id as family_id, f.name as family_name,
             o.id as order_id, o.name as order_name,

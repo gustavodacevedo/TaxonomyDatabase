@@ -23,6 +23,85 @@
         .scientific-name {
             font-style: italic;
         }
+
+        /* Phylogenetic Tree Styles */
+        .taxonomy-path {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+        }
+
+        #current-path .badge {
+            font-size: 0.85rem;
+            padding: 6px 10px;
+        }
+
+        #rank-options {
+            gap: 8px;
+        }
+
+        #rank-options button {
+            transition: all 0.2s ease;
+        }
+
+        #rank-options button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .phylo-level-indicator {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .phylo-level-indicator .level-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px 0;
+            position: relative;
+        }
+
+        .phylo-level-indicator .level-item::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 0;
+            height: 2px;
+            width: 100%;
+            background-color: #dee2e6;
+            z-index: 1;
+        }
+
+        .phylo-level-indicator .level-item:last-child::after {
+            display: none;
+        }
+
+        .phylo-level-indicator .level-item .level-marker {
+            width: 30px;
+            height: 30px;
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .phylo-level-indicator .level-item.active .level-marker {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .phylo-level-indicator .level-item.completed .level-marker {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
+}
     </style>
 </head>
 <body>
@@ -32,6 +111,9 @@
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="explorer-tab" data-bs-toggle="tab" data-bs-target="#explorer" type="button" role="tab">Explorer</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="phylo-tab" data-bs-toggle="tab" data-bs-target="#phylo" type="button" role="tab">Phylogenetic Tree</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">Add Species</button>
@@ -63,6 +145,84 @@
                 </div>
             </div>
             
+            <!-- Phylogenetic Tree Tab -->    
+            <div class="tab-pane fade" id="phylo" role="tabpanel">
+                <h3>Phylogenetic Tree Explorer</h3>
+                <p class="mb-4">Navigate the tree of life by selecting taxonomic ranks. Click "Show Species" at any point to view all species within the selected classification.</p>
+                
+                <!-- Progress indicator -->
+                <div class="phylo-level-indicator mb-4">
+                    <div class="level-item" id="level-domain">
+                        <div class="level-marker">D</div>
+                        <small>Domain</small>
+                    </div>
+                    <div class="level-item" id="level-kingdom">
+                        <div class="level-marker">K</div>
+                        <small>Kingdom</small>
+                    </div>
+                    <div class="level-item" id="level-phylum">
+                        <div class="level-marker">P</div>
+                        <small>Phylum</small>
+                    </div>
+                    <div class="level-item" id="level-class">
+                        <div class="level-marker">C</div>
+                        <small>Class</small>
+                    </div>
+                    <div class="level-item" id="level-order">
+                        <div class="level-marker">O</div>
+                        <small>Order</small>
+                    </div>
+                    <div class="level-item" id="level-family">
+                        <div class="level-marker">F</div>
+                        <small>Family</small>
+                    </div>
+                    <div class="level-item" id="level-genus">
+                        <div class="level-marker">G</div>
+                        <small>Genus</small>
+                    </div>
+                    <div class="level-item" id="level-species">
+                        <div class="level-marker">S</div>
+                        <small>Species</small>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="taxonomy-path card p-3 mb-3">
+                            <h6>Current Selection:</h6>
+                            <div id="current-path" class="d-flex flex-wrap align-items-center">
+                                <span class="badge bg-secondary me-2 mb-2">All Life</span>
+                            </div>
+                        </div>
+                        
+                        <button id="show-species-btn" class="btn btn-success mb-3">Show Species</button>
+                        <button id="reset-tree-btn" class="btn btn-outline-secondary mb-3 ms-2">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span id="current-rank">Domain</span>
+                                <div class="spinner-border spinner-border-sm text-primary d-none" id="rank-loading" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div id="rank-options" class="d-flex flex-wrap">
+                                    <!-- Rank options will be loaded here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="phylo-species-container" class="row">
+                    <!-- Species cards will be loaded here when Show Species is clicked -->
+                </div>
+            </div>
+
             <!-- Add Species Tab -->
             <div class="tab-pane fade" id="add" role="tabpanel">
                 <h3>Add New Species</h3>
@@ -229,6 +389,404 @@
             });
         });
         
+        // Phylogenetic Tree variables
+let currentPath = [];
+let currentRank = 'domain';
+let rankOrder = ['domain', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Add this to your existing event listener
+    
+    // Initialize the phylogenetic tree
+    if (document.getElementById('phylo-tab')) {
+        initPhylogeneticTree();
+        
+        // Show Species button click
+        document.getElementById('show-species-btn').addEventListener('click', function() {
+            showSpeciesForCurrentSelection();
+        });
+        
+        // Reset Tree button click
+        document.getElementById('reset-tree-btn').addEventListener('click', function() {
+            resetPhylogeneticTree();
+        });
+    }
+});
+
+// Initialize the phylogenetic tree
+function initPhylogeneticTree() {
+    // Clear any existing path
+    currentPath = [];
+    currentRank = 'domain';
+    
+    // Update UI
+    updateCurrentPathDisplay();
+    
+    // Set domain as active in progress indicator
+    rankOrder.forEach(rank => {
+        const item = document.getElementById(`level-${rank}`);
+        item.classList.remove('active', 'completed');
+    });
+    const domainItem = document.getElementById('level-domain');
+    domainItem.classList.add('active');
+    
+    // Load rank options
+    loadRankOptions();
+}
+
+// Reset the phylogenetic tree
+function resetPhylogeneticTree() {
+    initPhylogeneticTree();
+    // Clear species display
+    document.getElementById('phylo-species-container').innerHTML = '';
+    
+    // Reset progress indicator
+    rankOrder.forEach(rank => {
+        const item = document.getElementById(`level-${rank}`);
+        item.classList.remove('active', 'completed');
+    });
+    
+    // Set domain as active
+    const domainItem = document.getElementById('level-domain');
+    domainItem.classList.add('active');
+}
+
+// Update the current path display and progress indicator
+function updateCurrentPathDisplay() {
+    const pathContainer = document.getElementById('current-path');
+    pathContainer.innerHTML = '';
+    
+    // Always show "All Life" as the starting point
+    const allLifeBadge = document.createElement('span');
+    allLifeBadge.className = 'badge bg-secondary me-2 mb-2';
+    allLifeBadge.textContent = 'All Life';
+    pathContainer.appendChild(allLifeBadge);
+    
+    // Add each item in the current path
+    currentPath.forEach((item, index) => {
+        const badge = document.createElement('span');
+        badge.className = 'badge bg-primary me-2 mb-2';
+        badge.textContent = `${rankOrder[index]}: ${item.name}`;
+        pathContainer.appendChild(badge);
+    });
+    
+    // Update current rank display
+    document.getElementById('current-rank').textContent = 
+        currentRank.charAt(0).toUpperCase() + currentRank.slice(1);
+    
+    // Update progress indicator
+    updateProgressIndicator();
+}
+
+// Update the progress indicator
+function updateProgressIndicator() {
+    // Reset all items
+    rankOrder.forEach(rank => {
+        const item = document.getElementById(`level-${rank}`);
+        item.classList.remove('active', 'completed');
+    });
+    
+    // Mark completed items
+    currentPath.forEach((item, index) => {
+        const rank = rankOrder[index];
+        const element = document.getElementById(`level-${rank}`);
+        element.classList.add('completed');
+    });
+    
+    // Mark active item (current rank)
+    const currentItem = document.getElementById(`level-${currentRank}`);
+    currentItem.classList.add('active');
+}
+
+// Load options for the current rank
+function loadRankOptions() {
+    const optionsContainer = document.getElementById('rank-options');
+    const loadingSpinner = document.getElementById('rank-loading');
+    
+    // Show loading spinner
+    optionsContainer.innerHTML = '';
+    loadingSpinner.classList.remove('d-none');
+    
+    // Determine URL for API call and parameters
+    let url = '';
+    let parentRank = '';
+    let parentId = '';
+    
+    if (currentPath.length > 0) {
+        // If we have a path, get the parent rank and ID
+        const parentRankIndex = rankOrder.indexOf(currentRank) - 1;
+        if (parentRankIndex >= 0) {
+            parentRank = rankOrder[parentRankIndex];
+            parentId = currentPath[parentRankIndex].id;
+            url = `/api/taxonomic-rank/${currentRank}?parent_rank=${parentRank}&parent_id=${parentId}`;
+        } else {
+            url = `/api/taxonomic-rank/${currentRank}`;
+        }
+    } else {
+        // If at the beginning (domain level), just get all domains
+        url = `/api/taxonomic-rank/${currentRank}`;
+    }
+    
+    // If using the existing endpoint before new ones are implemented
+    if (currentRank === 'domain' && !currentPath.length) {
+        // Initial load - use the existing endpoint to get all domains
+        fetch('/api/taxonomy')
+            .then(response => response.json())
+            .then(data => {
+                // Hide loading spinner
+                loadingSpinner.classList.add('d-none');
+                
+                // Get domains data
+                const domains = data.domains || [];
+                
+                // Display options
+                if (domains.length === 0) {
+                    optionsContainer.innerHTML = '<p>No domains available.</p>';
+                } else {
+                    // For domains, show the main three to start with
+                    const mainDomains = ['Archaea', 'Bacteria', 'Eukarya'];
+                    
+                    // First show the main domains
+                    mainDomains.forEach(domainName => {
+                        const domain = domains.find(d => d.name.toLowerCase() === domainName.toLowerCase());
+                        if (domain) {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-outline-primary me-2 mb-2';
+                            button.textContent = domain.name;
+                            button.dataset.id = domain.id;
+                            button.addEventListener('click', function() {
+                                selectRankOption(domain);
+                            });
+                            optionsContainer.appendChild(button);
+                        }
+                    });
+                    
+                    // Then show any other domains
+                    domains.forEach(domain => {
+                        if (!mainDomains.find(m => m.toLowerCase() === domain.name.toLowerCase())) {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-outline-secondary me-2 mb-2';
+                            button.textContent = domain.name;
+                            button.dataset.id = domain.id;
+                            button.addEventListener('click', function() {
+                                selectRankOption(domain);
+                            });
+                            optionsContainer.appendChild(button);
+                        }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error loading domains:', error);
+                loadingSpinner.classList.add('d-none');
+                optionsContainer.innerHTML = '<p class="text-danger">Error loading domains. Please try again.</p>';
+            });
+        return;
+    }
+    
+    // For other ranks or when new endpoints are implemented
+    fetch(url)
+        .then(response => response.json())
+        .then(rankData => {
+            // Hide loading spinner
+            loadingSpinner.classList.add('d-none');
+            
+            // Display options
+            if (!rankData || rankData.length === 0) {
+                optionsContainer.innerHTML = '<p>No options available at this level.</p>';
+            } else {
+                // For kingdoms, highlight the main five
+                if (currentRank === 'kingdom') {
+                    const mainKingdoms = ['Monera', 'Protista', 'Fungi', 'Plantae', 'Animalia'];
+                    
+                    // First show the main kingdoms
+                    mainKingdoms.forEach(kingdomName => {
+                        const kingdom = rankData.find(k => k.name.toLowerCase() === kingdomName.toLowerCase());
+                        if (kingdom) {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-outline-primary me-2 mb-2';
+                            button.textContent = kingdom.name;
+                            button.dataset.id = kingdom.id;
+                            button.addEventListener('click', function() {
+                                selectRankOption(kingdom);
+                            });
+                            optionsContainer.appendChild(button);
+                        }
+                    });
+                    
+                    // Then show any other kingdoms
+                    rankData.forEach(kingdom => {
+                        if (!mainKingdoms.find(m => m.toLowerCase() === kingdom.name.toLowerCase())) {
+                            const button = document.createElement('button');
+                            button.className = 'btn btn-outline-secondary me-2 mb-2';
+                            button.textContent = kingdom.name;
+                            button.dataset.id = kingdom.id;
+                            button.addEventListener('click', function() {
+                                selectRankOption(kingdom);
+                            });
+                            optionsContainer.appendChild(button);
+                        }
+                    });
+                } else {
+                    // For other ranks, show all options
+                    rankData.forEach(item => {
+                        const button = document.createElement('button');
+                        button.className = 'btn btn-outline-primary me-2 mb-2';
+                        button.textContent = item.name;
+                        button.dataset.id = item.id;
+                        button.addEventListener('click', function() {
+                            selectRankOption(item);
+                        });
+                        optionsContainer.appendChild(button);
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading rank options:', error);
+            loadingSpinner.classList.add('d-none');
+            optionsContainer.innerHTML = '<p class="text-danger">Error loading options. Please try again.</p>';
+        });
+}
+
+// Handle selection of a rank option
+function selectRankOption(item) {
+    // Add selected item to path
+    const currentRankIndex = rankOrder.indexOf(currentRank);
+    
+    // Truncate path to current rank
+    currentPath = currentPath.slice(0, currentRankIndex);
+    
+    // Add new selection
+    currentPath.push({
+        rank: currentRank,
+        id: item.id,
+        name: item.name
+    });
+    
+    // Move to next rank if available
+    if (currentRankIndex < rankOrder.length - 1) {
+        currentRank = rankOrder[currentRankIndex + 1];
+    }
+    
+    // Update UI
+    updateCurrentPathDisplay();
+    loadRankOptions();
+}
+
+// Show species for the current selection
+function showSpeciesForCurrentSelection() {
+    const container = document.getElementById('phylo-species-container');
+    const loadingSpinner = document.getElementById('rank-loading');
+    
+    // Show loading spinner
+    container.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>';
+    
+    if (currentPath.length === 0) {
+        // If no selection, show all species
+        loadAllSpecies(container);
+        return;
+    }
+    
+    // Get the most specific rank selected
+    const lastSelection = currentPath[currentPath.length - 1];
+    const rank = lastSelection.rank;
+    const rankId = lastSelection.id;
+    
+    // Use the new API endpoint if available
+    fetch(`/api/species-by-rank/${rank}/${rankId}`)
+        .then(response => {
+            // Check if endpoint exists
+            if (response.ok) {
+                return response.json();
+            } else {
+                // Fall back to search method
+                console.log('Species by rank endpoint not available, falling back to search');
+                return fallbackSpeciesSearch(lastSelection.name);
+            }
+        })
+        .then(data => {
+            renderSpeciesList(container, data);
+        })
+        .catch(error => {
+            console.error('Error loading species:', error);
+            // Try fallback method
+            fallbackSpeciesSearch(lastSelection.name)
+                .then(data => {
+                    renderSpeciesList(container, data);
+                })
+                .catch(error => {
+                    console.error('Error with fallback search:', error);
+                    container.innerHTML = '<div class="col-12"><p class="text-danger">Error loading species. Please try again.</p></div>';
+                });
+        });
+}
+
+        // Fallback method to search species by name
+        function fallbackSpeciesSearch(searchTerm) {
+            return fetch(`/api/species?search=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json());
+        }
+
+        // Load all species
+        function loadAllSpecies(container) {
+            fetch('/api/species')
+                .then(response => response.json())
+                .then(data => {
+                    renderSpeciesList(container, data);
+                })
+                .catch(error => {
+                    console.error('Error loading species:', error);
+                    container.innerHTML = '<div class="col-12"><p class="text-danger">Error loading species. Please try again.</p></div>';
+                });
+        }
+
+        // Render species list
+        function renderSpeciesList(container, data) {
+            container.innerHTML = '';
+            
+            if (data.length === 0) {
+                container.innerHTML = '<div class="col-12"><p>No species found for the current selection.</p></div>';
+                return;
+            }
+            
+            // Display count
+            const countRow = document.createElement('div');
+            countRow.className = 'col-12';
+            countRow.innerHTML = `<p class="mb-3">Found ${data.length} species</p>`;
+            container.appendChild(countRow);
+            
+            // Display each species
+            data.forEach(species => {
+                const card = document.createElement('div');
+                card.className = 'col-md-4 mb-4';
+                
+                let tagsHtml = '';
+                if (species.tags) {
+                    if (Array.isArray(species.tags)) {
+                        tagsHtml = species.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    } else if (typeof species.tags === 'string') {
+                        tagsHtml = species.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('');
+                    }
+                }
+                
+                card.innerHTML = `
+                    <div class="species-card">
+                        ${species.image_url ? `<img src="${species.image_url}" alt="${species.common_name || species.name}" class="img-fluid mb-2">` : ''}
+                        <h4>${species.common_name || 'Unknown'}</h4>
+                        <p class="scientific-name">${species.genus_name || ''} ${species.name}</p>
+                        <p>${species.description ? species.description.substring(0, 100) + '...' : 'No description available.'}</p>
+                        <div class="tags">
+                            ${tagsHtml}
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewSpeciesDetails('${species.id}')">View Details</button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+
         // Load species with optional search term or tag
         function loadSpecies(searchTerm = '', tagName = '') {
             let url = '/api/species';
