@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxonomic Database</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .species-card {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .tag {
+            background-color: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin-right: 5px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .scientific-name {
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Taxonomic Explorer</h1>
+        
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="explorer-tab" data-bs-toggle="tab" data-bs-target="#explorer" type="button" role="tab">Explorer</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">Add Species</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="import-export-tab" data-bs-toggle="tab" data-bs-target="#import-export" type="button" role="tab">Import/Export</button>
+            </li>
+        </ul>
+        
+        <div class="tab-content" id="myTabContent">
+            <!-- Explorer Tab -->
+            <div class="tab-pane fade show active" id="explorer" role="tabpanel">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" id="search-input" class="form-control" placeholder="Search species...">
+                            <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div id="tag-filters" class="d-flex flex-wrap">
+                            <!-- Tags will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="species-container" class="row">
+                    <!-- Species cards will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Add Species Tab -->
+            <div class="tab-pane fade" id="add" role="tabpanel">
+                <h3>Add New Species</h3>
+                <form id="add-species-form">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Taxonomy</h4>
+                            <div class="mb-3">
+                                <label for="domain" class="form-label">Domain</label>
+                                <input type="text" class="form-control" id="domain" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="kingdom" class="form-label">Kingdom</label>
+                                <input type="text" class="form-control" id="kingdom" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phylum" class="form-label">Phylum</label>
+                                <input type="text" class="form-control" id="phylum" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="class" class="form-label">Class</label>
+                                <input type="text" class="form-control" id="class" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="order" class="form-label">Order</label>
+                                <input type="text" class="form-control" id="order" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="family" class="form-label">Family</label>
+                                <input type="text" class="form-control" id="family" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="genus" class="form-label">Genus</label>
+                                <input type="text" class="form-control" id="genus" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="species-name" class="form-label">Species</label>
+                                <input type="text" class="form-control" id="species-name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>Species Details</h4>
+                            <div class="mb-3">
+                                <label for="common-name" class="form-label">Common Name</label>
+                                <input type="text" class="form-control" id="common-name">
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="image-url" class="form-label">Image URL</label>
+                                <input type="url" class="form-control" id="image-url">
+                            </div>
+                            <div class="mb-3">
+                                <label for="discovery-year" class="form-label">Discovery Year</label>
+                                <input type="number" class="form-control" id="discovery-year">
+                            </div>
+                            <div class="mb-3">
+                                <label for="conservation-status" class="form-label">Conservation Status</label>
+                                <select class="form-control" id="conservation-status">
+                                    <option value="">-- Select --</option>
+                                    <option value="Not Evaluated">Not Evaluated</option>
+                                    <option value="Data Deficient">Data Deficient</option>
+                                    <option value="Least Concern">Least Concern</option>
+                                    <option value="Near Threatened">Near Threatened</option>
+                                    <option value="Vulnerable">Vulnerable</option>
+                                    <option value="Endangered">Endangered</option>
+                                    <option value="Critically Endangered">Critically Endangered</option>
+                                    <option value="Extinct in the Wild">Extinct in the Wild</option>
+                                    <option value="Extinct">Extinct</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="habitat" class="form-label">Habitat</label>
+                                <input type="text" class="form-control" id="habitat">
+                            </div>
+                            <div class="mb-3">
+                                <label for="tags" class="form-label">Tags (comma separated)</label>
+                                <input type="text" class="form-control" id="tags">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Species</button>
+                </form>
+            </div>
+            
+            <!-- Import/Export Tab -->
+            <div class="tab-pane fade" id="import-export" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">Export Database</div>
+                            <div class="card-body">
+                                <p>Download the entire database as a JSON file.</p>
+                                <button id="export-button" class="btn btn-primary">Export Database</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header">Import Database</div>
+                            <div class="card-body">
+                                <p>Import database from a JSON file.</p>
+                                <form id="import-form">
+                                    <div class="mb-3">
+                                        <input type="file" class="form-control" id="import-file" accept=".json">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Import Database</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">SQL Schema</div>
+                    <div class="card-body">
+                        <p>Generate and download the SQL schema for the taxonomic database.</p>
+                        <button id="schema-button" class="btn btn-primary">Get Schema</button>
+                        <div class="mt-3">
+                            <pre id="schema-content" class="bg-light p-3" style="display: none;"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // JavaScript to interact with the API
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load species and tags on page load
+            loadSpecies();
+            loadTags();
+            
+            // Search button click
+            document.getElementById('search-button').addEventListener('click', function() {
+                const searchTerm = document.getElementById('search-input').value;
+                loadSpecies(searchTerm);
+            });
+            
+            // Add species form submission
+            document.getElementById('add-species-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                addSpecies();
+            });
+            
+            // Export button click
+            document.getElementById('export-button').addEventListener('click', function() {
+                exportDatabase();
+            });
+            
+            // Import form submission
+            document.getElementById('import-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                importDatabase();
+            });
+            
+            // Schema button click
+            document.getElementById('schema-button').addEventListener('click', function() {
+                getSchema();
+            });
+        });
+        
+        // Load species with optional search term or tag
+        function loadSpecies(searchTerm = '', tagName = '') {
+            let url = '/api/species';
+            if (searchTerm) {
+                url += `?search=${encodeURIComponent(searchTerm)}`;
+            } else if (tagName) {
+                url += `?tag=${encodeURIComponent(tagName)}`;
+            }
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('species-container');
+                    container.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="col-12"><p>No species found.</p></div>';
+                        return;
+                    }
+                    
+                    data.forEach(species => {
+                        const card = document.createElement('div');
+                        card.className = 'col-md-4';
+                        
+                        let tagsHtml = '';
+                        if (species.tags) {
+                            if (Array.isArray(species.tags)) {
+                                tagsHtml = species.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                            } else if (typeof species.tags === 'string') {
+                                tagsHtml = species.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('');
+                            }
+                        }
+                        
+                        card.innerHTML = `
+                            <div class="species-card">
+                                ${species.image_url ? `<img src="${species.image_url}" alt="${species.common_name || species.name}" class="img-fluid mb-2">` : ''}
+                                <h4>${species.common_name || 'Unknown'}</h4>
+                                <p class="scientific-name">${species.genus_name || ''} ${species.name}</p>
+                                <p>${species.description || 'No description available.'}</p>
+                                <div class="tags">
+                                    ${tagsHtml}
+                                </div>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewSpeciesDetails('${species.id}')">View Details</button>
+                            </div>
+                        `;
+                        
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading species:', error);
+                });
+        }
+        
+        // Load tags
+        function loadTags() {
+            fetch('/api/tags')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('tag-filters');
+                    container.innerHTML = '<span class="me-2">Filter by tag:</span>';
+                    
+                    data.forEach(tag => {
+                        const tagButton = document.createElement('button');
+                        tagButton.className = 'btn btn-sm btn-outline-secondary me-1 mb-1';
+                        tagButton.textContent = tag.name;
+                        tagButton.addEventListener('click', function() {
+                            loadSpecies('', tag.name);
+                        });
+                        
+                        container.appendChild(tagButton);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading tags:', error);
+                });
+        }
+        
+        // Add new species
+        function addSpecies() {
+            const speciesData = {
+                domain: document.getElementById('domain').value,
+                kingdom: document.getElementById('kingdom').value,
+                phylum: document.getElementById('phylum').value,
+                class: document.getElementById('class').value,
+                order: document.getElementById('order').value,
+                family: document.getElementById('family').value,
+                genus: document.getElementById('genus').value,
+                species_name: document.getElementById('species-name').value,
+                common_name: document.getElementById('common-name').value,
+                description: document.getElementById('description').value,
+                image_url: document.getElementById('image-url').value,
+                discovery_year: document.getElementById('discovery-year').value,
+                conservation_status: document.getElementById('conservation-status').value,
+                habitat: document.getElementById('habitat').value,
+                tags: document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag)
+            };
+            
+            fetch('/api/species', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(speciesData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Species added successfully!');
+                document.getElementById('add-species-form').reset();
+                
+                // Switch back to explorer tab and refresh
+                document.getElementById('explorer-tab').click();
+                loadSpecies();
+                loadTags();
+            })
+            .catch(error => {
+                console.error('Error adding species:', error);
+                alert('Error adding species. Please try again.');
+            });
+        }
+        
+        // View species details
+        function viewSpeciesDetails(speciesId) {
+            fetch(`/api/species/${speciesId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Create a modal to display detailed information
+                    const modal = document.createElement('div');
+                    modal.className = 'modal fade';
+                    modal.id = 'speciesModal';
+                    modal.setAttribute('tabindex', '-1');
+                    
+                    const tagsHtml = Array.isArray(data.tags) 
+                        ? data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+                        : '';
+                    
+                    modal.innerHTML = `
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">${data.common_name || 'Unknown'}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <h6 class="scientific-name">${data.genus_name} ${data.species_name}</h6>
+                                    
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            ${data.image_url ? `<img src="${data.image_url}" alt="${data.common_name}" class="img-fluid mb-3">` : ''}
+                                            <p>${data.description || 'No description available.'}</p>
+                                            <div class="tags mb-3">
+                                                ${tagsHtml}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Taxonomic Classification</h6>
+                                            <table class="table table-bordered">
+                                                <tr><th>Domain</th><td>${data.domain_name}</td></tr>
+                                                <tr><th>Kingdom</th><td>${data.kingdom_name}</td></tr>
+                                                <tr><th>Phylum</th><td>${data.phylum_name}</td></tr>
+                                                <tr><th>Class</th><td>${data.class_name}</td></tr>
+                                                <tr><th>Order</th><td>${data.order_name}</td></tr>
+                                                <tr><th>Family</th><td>${data.family_name}</td></tr>
+                                                <tr><th>Genus</th><td>${data.genus_name}</td></tr>
+                                                <tr><th>Species</th><td>${data.species_name}</td></tr>
+                                            </table>
+                                            
+                                            <h6>Additional Information</h6>
+                                            <table class="table table-bordered">
+                                                ${data.discovery_year ? `<tr><th>Discovery Year</th><td>${data.discovery_year}</td></tr>` : ''}
+                                                ${data.conservation_status ? `<tr><th>Conservation Status</th><td>${data.conservation_status}</td></tr>` : ''}
+                                                ${data.habitat ? `<tr><th>Habitat</th><td>${data.habitat}</td></tr>` : ''}
+                                                ${data.geographic_distribution ? `<tr><th>Geographic Distribution</th><td>${data.geographic_distribution}</td></tr>` : ''}
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    document.body.appendChild(modal);
+                    
+                    const modalInstance = new bootstrap.Modal(modal);
+                    modalInstance.show();
+                    
+                    modal.addEventListener('hidden.bs.modal', function() {
+                        modal.remove();
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading species details:', error);
+                });
+        }
+        
+        // Export database
+        function exportDatabase() {
+            fetch('/api/export')
+                .then(response => response.json())
+                .then(data => {
+                    alert('Database exported successfully!');
+                    window.location.href = '/taxonomy_export.json';
+                })
+                .catch(error => {
+                    console.error('Error exporting database:', error);
+                    alert('Error exporting database. Please try again.');
+                });
+        }
+        
+        // Import database
+        function importDatabase() {
+            const fileInput = document.getElementById('import-file');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Please select a file to import.');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            fetch('/api/import', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    alert('Database imported successfully!');
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error importing database:', error);
+                alert('Error importing database. Please try again.');
+            });
+        }
+        
+        // Get SQL schema
+        function getSchema() {
+            fetch('/api/schema')
+                .then(response => response.json())
+                .then(data => {
+                    const schemaContent = document.getElementById('schema-content');
+                    schemaContent.textContent = data.schema;
+                    schemaContent.style.display = 'block';
+                    
+                    // Create download link
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(data.schema);
+                    downloadLink.download = 'taxonomy_schema.sql';
+                    downloadLink.className = 'btn btn-outline-primary mt-2';
+                    downloadLink.textContent = 'Download SQL Schema';
+                    
+                    const parentElement = schemaContent.parentElement;
+                    if (parentElement.querySelector('a')) {
+                        parentElement.querySelector('a').remove();
+                    }
+                    parentElement.appendChild(downloadLink);
+                })
+                .catch(error => {
+                    console.error('Error getting schema:', error);
+                    alert('Error getting schema. Please try again.');
+                });
+        }
+    </script>
+</body>
+</html>
