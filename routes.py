@@ -1,279 +1,196 @@
-from flask import request, jsonify, render_template
-from taxonomy_db import TaxonomicDatabase
+#!/usr/bin/env python3
+"""
+Route definitions for the Taxonomic Database web application
+"""
+from flask import render_template, request, jsonify, send_file
+import os
+import json
+from db_controller import DatabaseController
+
+# Initialize database controller
+db_controller = DatabaseController()
 
 def register_routes(app):
     """Register all routes with the Flask app."""
     
     @app.route('/')
     def index():
+        """Render the main application page."""
         return render_template('index.html')
-
-    @app.route('/api/taxonomy', methods=['GET'])
-    def get_taxonomy():
-        """Get all taxonomic levels."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
-        try:
-            domains = db.execute_sql("SELECT * FROM domains")
-            kingdoms = db.execute_sql("SELECT * FROM kingdoms")
-            phyla = db.execute_sql("SELECT * FROM phyla")
-            classes = db.execute_sql("SELECT * FROM classes")
-            orders = db.execute_sql("SELECT * FROM orders")
-            families = db.execute_sql("SELECT * FROM families")
-            genera = db.execute_sql("SELECT * FROM genera")
-            
-            result = {
-                'domains': domains,
-                'kingdoms': kingdoms,
-                'phyla': phyla,
-                'classes': classes,
-                'orders': orders,
-                'families': families,
-                'genera': genera
-            }
-            return jsonify(result)
-        finally:
-            db.disconnect()  # Always disconnect
-
-    @app.route('/api/species', methods=['GET'])
-    def get_species():
-        """Get species with optional filtering."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
-        try:
-            search = request.args.get('search', '')
-            tag = request.args.get('tag', '')
-            
-            if tag:
-                species = db.get_species_by_tag(tag)
-            elif search:
-                species = db.search_species(search_term=search)
-            else:
-                species = db.execute_sql("SELECT * FROM species")
-            
-            return jsonify(species)
-        finally:
-            db.disconnect()
-
-    @app.route('/api/species/<species_id>', methods=['GET'])
-    def get_species_details(species_id):
-        """Get detailed information about a species."""
-        db = TaxonomicDatabase()
-        db.connect()
-        
-        try:
-            taxonomy = db.get_full_taxonomy(species_id)
-            
-            if taxonomy:
-                return jsonify(taxonomy)
-            return jsonify({'error': 'Species not found'}), 404
-        finally:
-            db.disconnect()
-            
-    @app.route('/api/tags', methods=['GET'])
-    def get_tags():
-        """Get all tags."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
-        try:
-            tags = db.execute_sql("SELECT * FROM tags")
-            return jsonify(tags)
-        finally:
-            db.disconnect()
-
-    @app.route('/api/species', methods=['POST'])
-    def add_species():
-        """Add a new species with full taxonomy."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
-        try:
-            data = request.json
-            
-            taxonomy_data = {
-                'domain': data.get('domain'),
-                'kingdom': data.get('kingdom'),
-                'phylum': data.get('phylum'),
-                'class': data.get('class'),
-                'order': data.get('order'),
-                'family': data.get('family'),
-                'genus': data.get('genus')
-            }
-            
-            species_data = {
-                'name': data.get('species_name'),
-                'common_name': data.get('common_name'),
-                'description': data.get('description'),
-                'image_url': data.get('image_url'),
-                'discovery_year': data.get('discovery_year'),
-                'conservation_status': data.get('conservation_status'),
-                'habitat': data.get('habitat'),
-                'geographic_distribution': data.get('geographic_distribution')
-            }
-            
-            tags = data.get('tags', [])
-            
-            result = db.add_full_taxonomy(taxonomy_data, species_data, tags)
-            return jsonify(result)
-        finally:
-            db.disconnect()
-
-    @app.route('/api/export', methods=['GET'])
-    def export_data():
-        """Export the database to a JSON file."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
-        try:
-            result = db.export_database()
-            return jsonify({'message': 'Database exported successfully'})
-        finally:
-            db.disconnect()
-
-    @app.route('/api/import', methods=['POST'])
-    def import_data():
-        """Import the database from a JSON file."""
-        if 'file' not in request.files:
-            return jsonify({'error': 'No file part'}), 400
-        
-        file = request.files['file']
-        
-        if file.filename == '':
-            return jsonify({'error': 'No selected file'}), 400
-        
-        if file:
-            file_path = f"temp_{file.filename}"
-            file.save(file_path)
-            
-            db = TaxonomicDatabase()  # Create new instance
-            db.connect()
-            
-            try:
-                result = db.import_database(file_path)
-                
-                if result:
-                    return jsonify({'message': 'Database imported successfully'})
-                return jsonify({'error': 'Error importing database'}), 500
-            finally:
-                db.disconnect()
-
-    @app.route('/api/schema', methods=['GET'])
-    def get_schema():
-        """Get SQL schema."""
-        db_instance = TaxonomicDatabase()
-        schema = db_instance.generate_sql_script()
-        
-        return jsonify({'schema': schema})
     
-    @app.route('/api/taxonomic-rank/<rank>', methods=['GET'])
+    @app.route('/api/taxonomy')
+    def get_taxonomy():
+        """Get all taxonomic hierarchy data."""
+        try:
+            # Get all taxonomic data
+            domains = db_controller.taxonomy.get_taxonomic_rank_items('domain')
+            
+            return jsonify({
+                'domains': domains
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/taxonomic-rank/<rank>')
     def get_taxonomic_rank(rank):
-        """Get items for a specific taxonomic rank."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
+        """Get items for a specific taxonomic rank, optionally filtered by parent."""
         try:
             parent_rank = request.args.get('parent_rank')
             parent_id = request.args.get('parent_id')
             
-            items = db.get_taxonomic_rank_items(rank, parent_rank, parent_id)
-            return jsonify(items)
-        finally:
-            db.disconnect()
-
+            rank_items = db_controller.taxonomy.get_taxonomic_rank_items(rank, parent_rank, parent_id)
+            
+            return jsonify(rank_items)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/species', methods=['GET'])
+    def get_species():
+        """Get all species, optionally filtered by search term or tag."""
+        try:
+            search_term = request.args.get('search', '')
+            tag = request.args.get('tag', '')
+            all_species = request.args.get('all', 'false')
+            
+            db_controller.db.connect()
+            
+            if tag:
+                # Search by tag
+                species_list = db_controller.tags.get_species_by_tag(tag)
+            elif search_term:
+                # Search by term
+                species_list = db_controller.species.search_species(search_term=search_term)
+            elif all_species.lower() == 'true':
+                # Explicitly requesting all species
+                species_list = db_controller.species.get_all_species()
+            else:
+                # Get all species as default behavior
+                species_list = db_controller.species.get_all_species()
+            
+            db_controller.db.disconnect()
+            
+            return jsonify(species_list)
+        except Exception as e:
+            db_controller.db.disconnect()
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/species/<species_id>', methods=['GET'])
+    def get_species_details(species_id):
+        """Get detailed information about a specific species."""
+        try:
+            species_data = db_controller.species.get_full_taxonomy(species_id)
+            
+            if not species_data:
+                return jsonify({'error': 'Species not found'}), 404
+            
+            return jsonify(species_data)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/species', methods=['POST'])
+    def add_species():
+        """Add a new species with complete taxonomy."""
+        try:
+            data = request.json
+            
+            # Create taxonomy data structure
+            taxonomy_data = {
+                'domain': data.get('domain', ''),
+                'kingdom': data.get('kingdom', ''),
+                'phylum': data.get('phylum', ''),
+                'class': data.get('class', ''),
+                'order': data.get('order', ''),
+                'family': data.get('family', ''),
+                'genus': data.get('genus', '')
+            }
+            
+            # Create species data structure
+            species_data = {
+                'name': data.get('species_name', ''),
+                'common_name': data.get('common_name', ''),
+                'description': data.get('description', ''),
+                'image_url': data.get('image_url', ''),
+                'distribution_map_url': data.get('distribution_map_url', ''),
+                'discovery_year': data.get('discovery_year', None),
+                'conservation_status': data.get('conservation_status', ''),
+                'habitat': data.get('habitat', ''),
+                'geographic_distribution': data.get('geographic_distribution', '')
+            }
+            
+            # Extract tags
+            tags = data.get('tags', [])
+            
+            # Add to database
+            result = db_controller.add_complete_species(taxonomy_data, species_data, tags)
+            
+            return jsonify({
+                'success': True,
+                'species_id': result.get('species_id')
+            })
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
     @app.route('/api/species-by-rank/<rank>/<rank_id>', methods=['GET'])
     def get_species_by_rank(rank, rank_id):
-        """Get species that belong to a specific taxonomic rank item."""
-        db = TaxonomicDatabase()  # Create new instance
-        db.connect()
-        
+        """Get all species under a specific taxonomic rank."""
         try:
-            # Build query based on the rank
-            if rank == 'domain':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                JOIN orders o ON f.order_id = o.id
-                JOIN classes c ON o.class_id = c.id
-                JOIN phyla p ON c.phylum_id = p.id
-                JOIN kingdoms k ON p.kingdom_id = k.id
-                JOIN domains d ON k.domain_id = d.id
-                WHERE d.id = %s
-                """
-            elif rank == 'kingdom':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                JOIN orders o ON f.order_id = o.id
-                JOIN classes c ON o.class_id = c.id
-                JOIN phyla p ON c.phylum_id = p.id
-                JOIN kingdoms k ON p.kingdom_id = k.id
-                WHERE k.id = %s
-                """
-            elif rank == 'phylum':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                JOIN orders o ON f.order_id = o.id
-                JOIN classes c ON o.class_id = c.id
-                JOIN phyla p ON c.phylum_id = p.id
-                WHERE p.id = %s
-                """
-            elif rank == 'class':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                JOIN orders o ON f.order_id = o.id
-                JOIN classes c ON o.class_id = c.id
-                WHERE c.id = %s
-                """
-            elif rank == 'order':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                JOIN orders o ON f.order_id = o.id
-                WHERE o.id = %s
-                """
-            elif rank == 'family':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                JOIN families f ON g.family_id = f.id
-                WHERE f.id = %s
-                """
-            elif rank == 'genus':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                WHERE g.id = %s
-                """
-            elif rank == 'species':
-                query = """
-                SELECT s.*, g.name as genus_name
-                FROM species s
-                JOIN genera g ON s.genus_id = g.id
-                WHERE s.id = %s
-                """
-            else:
-                return jsonify([])
+            species_list = db_controller.taxonomy.get_species_by_rank(rank, rank_id)
+            return jsonify(species_list)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/tags', methods=['GET'])
+    def get_tags():
+        """Get all tags."""
+        try:
+            tags = db_controller.tags.get_all_tags()
+            return jsonify(tags)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/export', methods=['GET'])
+    def export_database():
+        """Export the database to a JSON file."""
+        try:
+            export_file = 'taxonomy_export.json'
+            db_controller.export_database(export_file)
             
-            species = db.execute_sql(query, [rank_id])
-            return jsonify(species)
-        finally:
-            db.disconnect()
-
-    return app
+            # Serve the file for download
+            return send_file(export_file, as_attachment=True)
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/import', methods=['POST'])
+    def import_database():
+        """Import database from a JSON file."""
+        try:
+            # Check if file was uploaded
+            if 'file' not in request.files:
+                return jsonify({'error': 'No file uploaded'}), 400
+            
+            file = request.files['file']
+            
+            if file.filename == '':
+                return jsonify({'error': 'No file selected'}), 400
+            
+            # Save the uploaded file
+            upload_path = 'taxonomy_import.json'
+            file.save(upload_path)
+            
+            success = db_controller.import_database(upload_path)
+            
+            if success:
+                return jsonify({'success': True})
+            else:
+                return jsonify({'error': 'Failed to import database'}), 500
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
+    @app.route('/api/schema', methods=['GET'])
+    def get_schema():
+        """Get the database schema as SQL."""
+        try:
+            schema_sql = db_controller.db.generate_sql_script()
+            return jsonify({'schema': schema_sql})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500

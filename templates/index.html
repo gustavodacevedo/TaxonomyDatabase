@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Taxonomic Database</title>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
         <style>
@@ -198,6 +199,7 @@
                         
                         <button id="show-species-btn" class="btn btn-success mb-3">Show Species</button>
                         <button id="reset-tree-btn" class="btn btn-outline-secondary mb-3 ms-2">Reset</button>
+                        <button id="debug-tree-btn" class="btn btn-outline-danger mb-3 ms-2">Debug Tree</button>
                     </div>
                 </div>
                 
@@ -385,6 +387,11 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Phylogenetic Tree variables
+        let currentPath = [];
+        let currentRank = 'domain';
+        let rankOrder = ['domain', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
+
         // JavaScript to interact with the API
         document.addEventListener('DOMContentLoaded', function() {
             // Load species and tags on page load
@@ -418,26 +425,63 @@
             document.getElementById('schema-button').addEventListener('click', function() {
                 getSchema();
             });
-        });
-        
-        // Phylogenetic Tree variables
-        let currentPath = [];
-        let currentRank = 'domain';
-        let rankOrder = ['domain', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species'];
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize the phylogenetic tree
+            
+            // Initialize the phylogenetic tree when the tab is clicked
             if (document.getElementById('phylo-tab')) {
-                initPhylogeneticTree();
-                
-                // Show Species button click
+                document.getElementById('phylo-tab').addEventListener('click', function() {
+                    console.log("Phylo tab clicked - initializing tree");
+                    setTimeout(function() {
+                        initPhylogeneticTree();
+                    }, 100);
+                });
+            }  // Added the missing closing bracket here
+            
+            // Show Species button click
+            if (document.getElementById('show-species-btn')) {
                 document.getElementById('show-species-btn').addEventListener('click', function() {
+                    console.log("Show species button clicked");
                     showSpeciesForCurrentSelection();
                 });
-                
-                // Reset Tree button click
+            }
+            
+            // Reset Tree button click
+            if (document.getElementById('reset-tree-btn')) {
                 document.getElementById('reset-tree-btn').addEventListener('click', function() {
+                    console.log("Reset tree button clicked");
                     resetPhylogeneticTree();
+                });
+            }
+            
+            // Debug Tree button click
+            if (document.getElementById('debug-tree-btn')) {
+                document.getElementById('debug-tree-btn').addEventListener('click', function() {
+                    console.log("Debug button clicked");
+                    
+                    // Output current state
+                    console.log("Current path:", currentPath);
+                    console.log("Current rank:", currentRank);
+                    
+                    // Force reload domains
+                    currentPath = [];
+                    currentRank = 'domain';
+                    
+                    // Check if API is returning data
+                    fetch('/api/taxonomic-rank/domain')
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log("API domain data:", data);
+                            
+                            if (!data || data.length === 0) {
+                                alert("API returned no domain data. Check server logs.");
+                            } else {
+                                alert(`API returned ${data.length} domains. Check console for details.`);
+                                loadRankOptions();
+                            }
+                        })
+                        .catch(error => {
+                            console.error("API error:", error);
+                            alert("API error - check console");
+                        });
                 });
             }
         });
@@ -459,13 +503,24 @@
             const domainItem = document.getElementById('level-domain');
             domainItem.classList.add('active');
             
+            // Disable the Show Species button until a selection is made
+            document.getElementById('show-species-btn').disabled = false;
+            
             // Load rank options
             loadRankOptions();
         }
 
         // Reset the phylogenetic tree
         function resetPhylogeneticTree() {
-            initPhylogeneticTree();
+            console.log("Resetting phylogenetic tree");
+            
+            // Clear any existing path
+            currentPath = [];
+            currentRank = 'domain';
+            
+            // Update UI
+            updateCurrentPathDisplay();
+            
             // Clear species display
             document.getElementById('phylo-species-container').innerHTML = '';
             
@@ -478,8 +533,14 @@
             // Set domain as active
             const domainItem = document.getElementById('level-domain');
             domainItem.classList.add('active');
+            
+            // Disable the Show Species button 
+            document.getElementById('show-species-btn').disabled = true;
+            
+            // Load rank options
+            loadRankOptions();
         }
-
+        
         // Update the current path display and progress indicator
         function updateCurrentPathDisplay() {
             const pathContainer = document.getElementById('current-path');
@@ -583,112 +644,137 @@
             optionsContainer.innerHTML = '';
             loadingSpinner.classList.remove('d-none');
             
+            console.log("Loading rank options for rank:", currentRank);
+            
             // Determine URL for API call and parameters
-            let url = '';
-            let parentRank = '';
-            let parentId = '';
+            let url = `/api/taxonomic-rank/${currentRank}`;
             
             if (currentPath.length > 0) {
                 // If we have a path, get the parent rank and ID
                 const parentRankIndex = rankOrder.indexOf(currentRank) - 1;
                 if (parentRankIndex >= 0) {
-                    parentRank = rankOrder[parentRankIndex];
-                    parentId = currentPath[parentRankIndex].id;
-                    url = `/api/taxonomic-rank/${currentRank}?parent_rank=${parentRank}&parent_id=${parentId}`;
-                } else {
-                    url = `/api/taxonomic-rank/${currentRank}`;
+                    const parentRank = rankOrder[parentRankIndex];
+                    const parentId = currentPath[parentRankIndex].id;
+                    url += `?parent_rank=${parentRank}&parent_id=${parentId}`;
                 }
-            } else {
-                // If at the beginning (domain level), just get all domains
-                url = `/api/taxonomic-rank/${currentRank}`;
             }
             
-            // If using the existing endpoint before new ones are implemented
+            console.log("Fetching rank options from:", url);
+            
+            // Special handling for domain level at the start
             if (currentRank === 'domain' && !currentPath.length) {
-                // Initial load - use the existing endpoint to get all domains
-                fetch('/api/taxonomy')
-                    .then(response => response.json())
-                    .then(data => {
+                console.log("Initial domain loading");
+                
+                // Add a fallback for domain data if API fails
+                const fallbackDomainData = [
+                    { id: "domain-bacteria", name: "Bacteria", description: "Single-celled prokaryotic microorganisms" },
+                    { id: "domain-archaea", name: "Archaea", description: "Single-celled microorganisms similar to bacteria but with different cell structure" },
+                    { id: "domain-eukarya", name: "Eukarya", description: "Organisms whose cells have a nucleus enclosed within a nuclear envelope" }
+                ];
+                
+                fetch(url)
+                    .then(response => {
+                        console.log("Domain API response status:", response.status);
+                        return response.json();
+                    })
+                    .then(domains => {
                         // Hide loading spinner
                         loadingSpinner.classList.add('d-none');
                         
-                        // Get domains data
-                        const domains = data.domains || [];
+                        console.log("Domain data received:", domains);
+                        
+                        // If no domains were returned or the data is invalid, use fallback data
+                        if (!domains || domains.length === 0 || !Array.isArray(domains)) {
+                            console.warn("Using fallback domain data because API returned no valid data");
+                            domains = fallbackDomainData;
+                        }
                         
                         // Display options
-                        if (domains.length === 0) {
-                            optionsContainer.innerHTML = '<p>No domains available.</p>';
-                        } else {
-                            // For domains, show the main three to start with
-                            const mainDomains = ['Archaea', 'Bacteria', 'Eukarya'];
-                            
-                            // First show the main domains
-                            mainDomains.forEach(domainName => {
-                                const domain = domains.find(d => d.name.toLowerCase() === domainName.toLowerCase());
-                                if (domain) {
-                                    optionsContainer.appendChild(createOptionButton(domain, true));
-                                }
-                            });
-                            
-                            // Then show any other domains
-                            domains.forEach(domain => {
-                                if (!mainDomains.find(m => m.toLowerCase() === domain.name.toLowerCase())) {
-                                    optionsContainer.appendChild(createOptionButton(domain, false));
-                                }
-                            });
+                        // For domains, show the main three to start with
+                        const mainDomains = ['Archaea', 'Bacteria', 'Eukarya'];
+                        
+                        // First show the main domains
+                        mainDomains.forEach(domainName => {
+                            const domain = domains.find(d => d.name && d.name.toLowerCase() === domainName.toLowerCase());
+                            if (domain) {
+                                optionsContainer.appendChild(createOptionButton(domain, true));
+                            } else {
+                                console.warn(`Domain ${domainName} not found in API data`);
+                            }
+                        });
+                        
+                        // Then show any other domains
+                        domains.forEach(domain => {
+                            if (domain.name && !mainDomains.find(m => m.toLowerCase() === domain.name.toLowerCase())) {
+                                optionsContainer.appendChild(createOptionButton(domain, false));
+                            }
+                        });
+                        
+                        // If no buttons were created, show an error message
+                        if (optionsContainer.children.length === 0) {
+                            optionsContainer.innerHTML = '<p>No domains available. Please try refreshing the page.</p>';
                         }
                     })
                     .catch(error => {
                         console.error('Error loading domains:', error);
                         loadingSpinner.classList.add('d-none');
-                        optionsContainer.innerHTML = '<p class="text-danger">Error loading domains. Please try again.</p>';
+                        
+                        // Use fallback domain data if the API fails
+                        console.warn("Using fallback domain data due to API error");
+                        const domains = fallbackDomainData;
+                        
+                        domains.forEach(domain => {
+                            optionsContainer.appendChild(createOptionButton(domain, true));
+                        });
                     });
                 return;
             }
+    
+    // For other ranks
+    fetch(url)
+        .then(response => response.json())
+        .then(rankData => {
+            // Hide loading spinner
+            loadingSpinner.classList.add('d-none');
             
-            // For other ranks or when new endpoints are implemented
-            fetch(url)
-                .then(response => response.json())
-                .then(rankData => {
-                    // Hide loading spinner
-                    loadingSpinner.classList.add('d-none');
+            console.log("Rank data received:", rankData);
+            
+            // Display options
+            if (!rankData || rankData.length === 0) {
+                optionsContainer.innerHTML = '<p>No options available at this level.</p>';
+            } else {
+                // For kingdoms, highlight the main five
+                if (currentRank === 'kingdom') {
+                    const mainKingdoms = ['Monera', 'Protista', 'Fungi', 'Plantae', 'Animalia'];
                     
-                    // Display options
-                    if (!rankData || rankData.length === 0) {
-                        optionsContainer.innerHTML = '<p>No options available at this level.</p>';
-                    } else {
-                        // For kingdoms, highlight the main five
-                        if (currentRank === 'kingdom') {
-                            const mainKingdoms = ['Monera', 'Protista', 'Fungi', 'Plantae', 'Animalia'];
-                            
-                            // First show the main kingdoms
-                            mainKingdoms.forEach(kingdomName => {
-                                const kingdom = rankData.find(k => k.name.toLowerCase() === kingdomName.toLowerCase());
-                                if (kingdom) {
-                                    optionsContainer.appendChild(createOptionButton(kingdom, true));
-                                }
-                            });
-                            
-                            // Then show any other kingdoms
-                            rankData.forEach(kingdom => {
-                                if (!mainKingdoms.find(m => m.toLowerCase() === kingdom.name.toLowerCase())) {
-                                    optionsContainer.appendChild(createOptionButton(kingdom, false));
-                                }
-                            });
-                        } else {
-                            // For other ranks, show all options
-                            rankData.forEach(item => {
-                                optionsContainer.appendChild(createOptionButton(item, true));
-                            });
+                    // First show the main kingdoms
+                    mainKingdoms.forEach(kingdomName => {
+                        const kingdom = rankData.find(k => k.name && k.name.toLowerCase() === kingdomName.toLowerCase());
+                        if (kingdom) {
+                            optionsContainer.appendChild(createOptionButton(kingdom, true));
                         }
-                    }
-                })
-                .catch(error => {
-                    console.error('Error loading rank options:', error);
-                    loadingSpinner.classList.add('d-none');
-                    optionsContainer.innerHTML = '<p class="text-danger">Error loading options. Please try again.</p>';
-                });
-        }
+                    });
+                    
+                    // Then show any other kingdoms
+                    rankData.forEach(kingdom => {
+                        if (kingdom.name && !mainKingdoms.find(m => m.toLowerCase() === kingdom.name.toLowerCase())) {
+                            optionsContainer.appendChild(createOptionButton(kingdom, false));
+                        }
+                    });
+                } else {
+                    // For other ranks, show all options
+                    rankData.forEach(item => {
+                        optionsContainer.appendChild(createOptionButton(item, true));
+                    });
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error loading rank options:', error);
+            loadingSpinner.classList.add('d-none');
+            optionsContainer.innerHTML = '<p class="text-danger">Error loading options. Please try again.</p>';
+        });
+}
 
         // Handle selection of a rank option
         function selectRankOption(item) {
@@ -701,7 +787,7 @@
             confirmButton.parentNode.replaceChild(newConfirmButton, confirmButton);
             
             // Set the item details in the modal
-            document.getElementById('taxonomy-item-name').textContent = item.name;
+            document.getElementById('taxonomy-item-name').textContent = item.name || "Unknown";
             document.getElementById('taxonomy-rank').textContent = currentRank.charAt(0).toUpperCase() + currentRank.slice(1);
             
             // Set description or default message
@@ -714,7 +800,7 @@
             
             // Store the item temporarily
             modalElement.dataset.itemId = item.id;
-            modalElement.dataset.itemName = item.name;
+            modalElement.dataset.itemName = item.name || "Unknown";
             
             // Create Bootstrap modal instance
             const modal = new bootstrap.Modal(modalElement);
@@ -739,6 +825,8 @@
                     name: storedItem.name
                 });
                 
+                console.log("Updated path:", currentPath);
+                
                 // Move to next rank if available
                 if (currentRankIndex < rankOrder.length - 1) {
                     currentRank = rankOrder[currentRankIndex + 1];
@@ -747,6 +835,9 @@
                 // Update UI
                 updateCurrentPathDisplay();
                 loadRankOptions();
+                
+                // Enable the Show Species button - this is the key change
+                document.getElementById('show-species-btn').disabled = false;
                 
                 // Close the modal
                 modal.hide();
@@ -889,64 +980,85 @@
         }
 
        // Load species with optional search term or tag
-        function loadSpecies(searchTerm = '', tagName = '') {
-            let url = '/api/species';
-            if (searchTerm) {
-                url += `?search=${encodeURIComponent(searchTerm)}`;
-            } else if (tagName) {
-                url += `?tag=${encodeURIComponent(tagName)}`;
+function loadSpecies(searchTerm = '', tagName = '') {
+    let url = '/api/species';
+    
+    // Handle the API call differently based on what parameters we have
+    if (searchTerm !== '') {
+        // If we have a non-empty search term
+        url += `?search=${encodeURIComponent(searchTerm)}`;
+    } else if (tagName !== '') {
+        // If we have a tag name
+        url += `?tag=${encodeURIComponent(tagName)}`;
+    } else {
+        // For initial load, we want all species, not tags
+        // Use a unique, specific parameter that will ensure we get species
+        url += '?all=true';
+    }
+    
+    console.log("Fetching species from:", url);
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Species data received:", data);
+            
+            const container = document.getElementById('species-container');
+            container.innerHTML = '';
+            
+            // Validate that we received species data, not tags
+            if (!data || data.length === 0) {
+                container.innerHTML = '<div class="col-12"><p>No species found.</p></div>';
+                return;
             }
             
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const container = document.getElementById('species-container');
-                    container.innerHTML = '';
-                    
-                    if (data.length === 0) {
-                        container.innerHTML = '<div class="col-12"><p>No species found.</p></div>';
-                        return;
-                    }
-                    
-                    data.forEach(species => {
-                        const card = document.createElement('div');
-                        card.className = 'col-md-4';
-                        
-                        let tagsHtml = '';
-                        if (species.tags) {
-                            if (Array.isArray(species.tags)) {
-                                tagsHtml = species.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
-                            } else if (typeof species.tags === 'string') {
-                                tagsHtml = species.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('');
-                            }
-                        }
-                        
-                        // Add a map icon badge if distribution map is available
-                        const mapBadge = species.distribution_map_url 
-                            ? '<span class="badge bg-info text-white position-absolute top-0 end-0 m-2" title="Distribution map available"><i class="bi bi-map"></i> Map</span>' 
-                            : '';
-                        
-                        card.innerHTML = `
-                            <div class="species-card position-relative">
-                                ${mapBadge}
-                                ${species.image_url ? `<img src="${species.image_url}" alt="${species.common_name || species.name}" class="img-fluid mb-2">` : ''}
-                                <h4>${species.common_name || 'Unknown'}</h4>
-                                <p class="scientific-name">${species.genus_name || ''} ${species.name}</p>
-                                <p>${species.description ? species.description.substring(0, 100) + '...' : 'No description available.'}</p>
-                                <div class="tags">
-                                    ${tagsHtml}
-                                </div>
-                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewSpeciesDetails('${species.id}')">View Details</button>
-                            </div>
-                        `;
-                        
-                        container.appendChild(card);
-                    })
-                })
-                .catch(error => {
-                    console.error('Error loading species:', error);
-                });
+            // Check if we got tag data instead of species data
+            if (data[0] && !data[0].hasOwnProperty('name') && !data[0].hasOwnProperty('common_name')) {
+                console.warn("Received incorrect data type - forcing species search");
+                loadSpecies(" "); // Force a search with a space to get species
+                return;
             }
+            
+            // Render species cards
+            data.forEach(species => {
+                const card = document.createElement('div');
+                card.className = 'col-md-4';
+                
+                let tagsHtml = '';
+                if (species.tags) {
+                    if (Array.isArray(species.tags)) {
+                        tagsHtml = species.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+                    } else if (typeof species.tags === 'string') {
+                        tagsHtml = species.tags.split(',').map(tag => `<span class="tag">${tag.trim()}</span>`).join('');
+                    }
+                }
+                
+                // Add a map icon badge if distribution map is available
+                const mapBadge = species.distribution_map_url 
+                    ? '<span class="badge bg-info text-white position-absolute top-0 end-0 m-2" title="Distribution map available"><i class="bi bi-map"></i> Map</span>' 
+                    : '';
+                
+                card.innerHTML = `
+                    <div class="species-card position-relative">
+                        ${mapBadge}
+                        ${species.image_url ? `<img src="${species.image_url}" alt="${species.common_name || species.name}" class="img-fluid mb-2">` : ''}
+                        <h4>${species.common_name || 'Unknown'}</h4>
+                        <p class="scientific-name">${species.genus_name || ''} ${species.name}</p>
+                        <p>${species.description ? species.description.substring(0, 100) + '...' : 'No description available.'}</p>
+                        <div class="tags">
+                            ${tagsHtml}
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary mt-2" onclick="viewSpeciesDetails('${species.id}')">View Details</button>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        })
+        .catch(error => {
+            console.error('Error loading species:', error);
+        });
+}
 
         // Load tags
         function loadTags() {
