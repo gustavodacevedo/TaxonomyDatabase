@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Core Taxonomic Database functionality
 """
+import sys
+import os
+# Add the parent directory to Python's module search path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 import os
 import json
 import psycopg2
@@ -10,11 +16,11 @@ from psycopg2.extras import RealDictCursor
 from dotenv import load_dotenv
 import uuid
 
-# Import managers
-from species_manager import SpeciesManager
-from tag_manager import TagManager
-from taxonomy_manager import TaxonomyManager
-from schema_manager import SchemaManager  # Import the new SchemaManager
+# Import managers with updated import paths
+from managers.species_manager import SpeciesManager
+from managers.tag_manager import TagManager
+from managers.taxonomy_manager import TaxonomyManager
+from managers.schema_manager import SchemaManager
 
 # Load environment variables from .env file
 load_dotenv()

@@ -1,14 +1,21 @@
 #!/usr/bin/env python3
+#!/usr/bin/env python3
 """
 Main controller for the Taxonomic Database
 This file serves as the entry point for all database operations,
 using the modular components for each specific functionality.
 """
+import sys
 import os
-from taxonomy_db import TaxonomicDatabase
-from species_manager import SpeciesManager
-from tag_manager import TagManager
-from taxonomy_manager import TaxonomyManager
+# Add the parent directory to Python's module search path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+import os
+from core.taxonomy_db import TaxonomicDatabase  # Updated import path
+from managers.species_manager import SpeciesManager  # Updated import path
+from managers.tag_manager import TagManager  # Updated import path
+from managers.taxonomy_manager import TaxonomyManager  # Updated import path
+
 
 class DatabaseController:
     def __init__(self, connection_string=None):

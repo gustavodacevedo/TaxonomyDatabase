@@ -4,7 +4,7 @@ import csv
 import json
 import os
 import sys
-from taxonomy_db import TaxonomicDatabase, init_db
+from core.taxonomy_db import TaxonomicDatabase
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Taxonomic Database CLI Tool')

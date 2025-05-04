@@ -2,10 +2,15 @@
 """
 Route definitions for the Taxonomic Database web application
 """
+import sys
+import os
+# Add the parent directory to Python's module search path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from flask import render_template, request, jsonify, send_file
 import os
 import json
-from db_controller import DatabaseController
+from core.db_controller import DatabaseController  # Updated import path
 
 # Initialize database controller
 db_controller = DatabaseController()
