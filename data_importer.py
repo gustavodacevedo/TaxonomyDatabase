@@ -133,11 +133,11 @@ class TaxonomicDataImporter:
             return False
     
     def import_from_eol(self, eol_id):
-        """Import taxonomic data from Encyclopedia of Life."""
+    #Import taxonomic data from Encyclopedia of Life.#
         print(f"Fetching data from EOL for ID: {eol_id}")
         
         # Fetch basic page data
-        page_url = f"https://eol.org/api/pages/1.0/{eol_id}.json?images=1&videos=0&sounds=0&maps=0&text=1&details=1"
+        page_url = f"https://eol.org/api/pages/1.0/{eol_id}.json?images=1&videos=0&sounds=0&maps=1&text=1&details=1"
         response = requests.get(page_url)
         
         if response.status_code != 200:
@@ -180,7 +180,8 @@ class TaxonomicDataImporter:
                 'name': species_name,
                 'common_name': eol_data.get('vernacularNames', [{'vernacularName': ''}])[0].get('vernacularName', ''),
                 'description': '',
-                'image_url': ''
+                'image_url': '',
+                'distribution_map_url': ''
             }
             
             # Extract description
@@ -193,6 +194,12 @@ class TaxonomicDataImporter:
             for image in eol_data.get('dataObjects', []):
                 if image.get('type') == 'image':
                     species_data['image_url'] = image.get('eolMediaURL', '')
+                    break
+                    
+            # Extract map if available
+            for data_object in eol_data.get('dataObjects', []):
+                if data_object.get('type') == 'map' or 'map' in data_object.get('title', '').lower():
+                    species_data['distribution_map_url'] = data_object.get('eolMediaURL', '')
                     break
             
             # Add to database

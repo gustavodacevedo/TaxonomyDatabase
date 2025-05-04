@@ -99,6 +99,7 @@ def import_csv(args):
                     'common_name': row.get('common_name', '').strip(),
                     'description': row.get('description', '').strip(),
                     'image_url': row.get('image_url', '').strip(),
+                    'distribution_map_url': row.get('distribution_map_url', '').strip(),
                     'discovery_year': row.get('discovery_year', '').strip(),
                     'conservation_status': row.get('conservation_status', '').strip(),
                     'habitat': row.get('habitat', '').strip(),
@@ -130,7 +131,7 @@ def export_csv(args):
     query = """
     SELECT 
         s.id as species_id, s.name as species_name, s.common_name,
-        s.description, s.image_url, s.discovery_year, 
+        s.description, s.image_url, s.distribution_map_url, s.discovery_year, 
         s.conservation_status, s.habitat, s.geographic_distribution,
         g.name as genus, f.name as family, o.name as "order",
         c.name as class, p.name as phylum, k.name as kingdom,
@@ -155,7 +156,7 @@ def export_csv(args):
     with open(args.file, 'w', newline='') as csvfile:
         fieldnames = [
             'domain', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus',
-            'species', 'common_name', 'description', 'image_url', 
+            'species', 'common_name', 'description', 'image_url', 'distribution_map_url',
             'discovery_year', 'conservation_status', 'habitat', 
             'geographic_distribution', 'tags'
         ]
@@ -176,6 +177,7 @@ def export_csv(args):
                 'common_name': row['common_name'],
                 'description': row['description'],
                 'image_url': row['image_url'],
+                'distribution_map_url': row['distribution_map_url'],
                 'discovery_year': row['discovery_year'],
                 'conservation_status': row['conservation_status'],
                 'habitat': row['habitat'],

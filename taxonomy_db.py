@@ -96,110 +96,111 @@ class TaxonomicDatabase:
             return self.execute_sql(query)
     
     def create_schema(self):
-        """Create the complete taxonomic database schema."""
+    #Create the complete taxonomic database schema.#
         schema_sql = """
         -- Create extension for UUID generation
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
         -- Create tables for each taxonomic rank
         CREATE TABLE IF NOT EXISTS domains (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          name TEXT NOT NULL UNIQUE,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name TEXT NOT NULL UNIQUE,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
 
         CREATE TABLE IF NOT EXISTS kingdoms (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          domain_id UUID REFERENCES domains(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(domain_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        domain_id UUID REFERENCES domains(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(domain_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS phyla (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          kingdom_id UUID REFERENCES kingdoms(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(kingdom_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        kingdom_id UUID REFERENCES kingdoms(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(kingdom_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS classes (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          phylum_id UUID REFERENCES phyla(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(phylum_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        phylum_id UUID REFERENCES phyla(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(phylum_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS orders (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(class_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        class_id UUID REFERENCES classes(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(class_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS families (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(order_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(order_id, name)
         );
 
         CREATE TABLE IF NOT EXISTS genera (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          family_id UUID REFERENCES families(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(family_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        family_id UUID REFERENCES families(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(family_id, name)
         );
 
         -- Species table with additional fields
         CREATE TABLE IF NOT EXISTS species (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          genus_id UUID REFERENCES genera(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          common_name TEXT,
-          description TEXT,
-          image_url TEXT,
-          discovery_year INTEGER,
-          conservation_status TEXT,
-          habitat TEXT,
-          geographic_distribution TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(genus_id, name)
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        genus_id UUID REFERENCES genera(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        common_name TEXT,
+        description TEXT,
+        image_url TEXT,
+        distribution_map_url TEXT,
+        discovery_year INTEGER,
+        conservation_status TEXT,
+        habitat TEXT,
+        geographic_distribution TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(genus_id, name)
         );
 
         -- Tags table
         CREATE TABLE IF NOT EXISTS tags (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          name TEXT NOT NULL UNIQUE,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        name TEXT NOT NULL UNIQUE,
+        description TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         );
 
         -- Junction table for species and tags (many-to-many)
         CREATE TABLE IF NOT EXISTS species_tags (
-          species_id UUID REFERENCES species(id) ON DELETE CASCADE,
-          tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
-          PRIMARY KEY (species_id, tag_id)
+        species_id UUID REFERENCES species(id) ON DELETE CASCADE,
+        tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
+        PRIMARY KEY (species_id, tag_id)
         );
         
         -- Create indices for better performance
@@ -219,38 +220,34 @@ class TaxonomicDatabase:
         print("Schema created successfully.")
     
     def generate_sql_script(self):
-        """Generate SQL script for creating the database schema."""
+    #Generate SQL script for creating the database schema.#
         schema_sql = """
         -- Create extension for UUID generation
         CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-        -- Create tables for each taxonomic rank
-        CREATE TABLE IF NOT EXISTS domains (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          name TEXT NOT NULL UNIQUE,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+        -- ... other tables ...
+
+        -- Species table with additional fields
+        CREATE TABLE IF NOT EXISTS species (
+        id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+        genus_id UUID REFERENCES genera(id) ON DELETE CASCADE,
+        name TEXT NOT NULL,
+        common_name TEXT,
+        description TEXT,
+        image_url TEXT,
+        distribution_map_url TEXT,  # Add this line
+        discovery_year INTEGER,
+        conservation_status TEXT,
+        habitat TEXT,
+        geographic_distribution TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+        UNIQUE(genus_id, name)
         );
 
-        CREATE TABLE IF NOT EXISTS kingdoms (
-          id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-          domain_id UUID REFERENCES domains(id) ON DELETE CASCADE,
-          name TEXT NOT NULL,
-          description TEXT,
-          created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-          UNIQUE(domain_id, name)
-        );
-
-        -- ... (remaining table definitions) ...
-
-        -- Create indices for better performance
-        CREATE INDEX IF NOT EXISTS idx_kingdoms_domain_id ON kingdoms(domain_id);
-        CREATE INDEX IF NOT EXISTS idx_phyla_kingdom_id ON phyla(kingdom_id);
-        -- ... (remaining index definitions) ...
+        -- ... other tables and indices ...
         """
-        
+    
         # Save to file
         with open('taxonomy_schema.sql', 'w') as f:
             f.write(schema_sql)
@@ -287,41 +284,41 @@ class TaxonomicDatabase:
         return result[0]['id']
     
     def add_full_taxonomy(self, taxonomy_data, species_data=None, tags=None):
-        """Add a complete taxonomic classification with optional species data and tags."""
-        # Process each taxonomic rank
+    #Add a complete taxonomic classification with optional species data and tags.#
+    # Process each taxonomic rank
         domain_id = self.get_or_create_taxonomic_rank('domains', 
-                                                      taxonomy_data.get('domain', 'Unknown'),
-                                                      description=taxonomy_data.get('domain_description'))
+                                                    taxonomy_data.get('domain', 'Unknown'),
+                                                    description=taxonomy_data.get('domain_description'))
         
         kingdom_id = self.get_or_create_taxonomic_rank('kingdoms', 
-                                                       taxonomy_data.get('kingdom', 'Unknown'),
-                                                       domain_id, 'domain_id',
-                                                       taxonomy_data.get('kingdom_description'))
+                                                    taxonomy_data.get('kingdom', 'Unknown'),
+                                                    domain_id, 'domain_id',
+                                                    taxonomy_data.get('kingdom_description'))
         
         phylum_id = self.get_or_create_taxonomic_rank('phyla', 
-                                                      taxonomy_data.get('phylum', 'Unknown'),
-                                                      kingdom_id, 'kingdom_id',
-                                                      taxonomy_data.get('phylum_description'))
+                                                    taxonomy_data.get('phylum', 'Unknown'),
+                                                    kingdom_id, 'kingdom_id',
+                                                    taxonomy_data.get('phylum_description'))
         
         class_id = self.get_or_create_taxonomic_rank('classes', 
-                                                     taxonomy_data.get('class', 'Unknown'),
-                                                     phylum_id, 'phylum_id',
-                                                     taxonomy_data.get('class_description'))
+                                                    taxonomy_data.get('class', 'Unknown'),
+                                                    phylum_id, 'phylum_id',
+                                                    taxonomy_data.get('class_description'))
         
         order_id = self.get_or_create_taxonomic_rank('orders', 
-                                                     taxonomy_data.get('order', 'Unknown'),
-                                                     class_id, 'class_id',
-                                                     taxonomy_data.get('order_description'))
+                                                    taxonomy_data.get('order', 'Unknown'),
+                                                    class_id, 'class_id',
+                                                    taxonomy_data.get('order_description'))
         
         family_id = self.get_or_create_taxonomic_rank('families', 
-                                                      taxonomy_data.get('family', 'Unknown'),
-                                                      order_id, 'order_id',
-                                                      taxonomy_data.get('family_description'))
+                                                    taxonomy_data.get('family', 'Unknown'),
+                                                    order_id, 'order_id',
+                                                    taxonomy_data.get('family_description'))
         
         genus_id = self.get_or_create_taxonomic_rank('genera', 
-                                                     taxonomy_data.get('genus', 'Unknown'),
-                                                     family_id, 'family_id',
-                                                     taxonomy_data.get('genus_description'))
+                                                    taxonomy_data.get('genus', 'Unknown'),
+                                                    family_id, 'family_id',
+                                                    taxonomy_data.get('genus_description'))
         
         species_id = None
         if species_data:
@@ -329,9 +326,9 @@ class TaxonomicDatabase:
             query = """
             INSERT INTO species (
                 genus_id, name, common_name, description, 
-                image_url, discovery_year, conservation_status, 
+                image_url, distribution_map_url, discovery_year, conservation_status, 
                 habitat, geographic_distribution
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING id
             """
             params = [
@@ -340,6 +337,7 @@ class TaxonomicDatabase:
                 species_data.get('common_name'),
                 species_data.get('description'),
                 species_data.get('image_url'),
+                species_data.get('distribution_map_url'),
                 species_data.get('discovery_year'),
                 species_data.get('conservation_status'),
                 species_data.get('habitat'),
@@ -396,11 +394,11 @@ class TaxonomicDatabase:
         return self.execute_sql(query, [tag_name])
     
     def get_full_taxonomy(self, species_id):
-        """Get complete taxonomic classification for a species."""
+    #Get complete taxonomic classification for a species.#
         query = """
         SELECT 
             s.id as species_id, s.name as species_name, s.common_name,
-            s.description, s.image_url, s.discovery_year, s.conservation_status,
+            s.description, s.image_url, s.distribution_map_url, s.discovery_year, s.conservation_status,
             s.habitat, s.geographic_distribution,
             g.id as genus_id, g.name as genus_name,
             f.id as family_id, f.name as family_name,
