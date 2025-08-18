@@ -4,11 +4,16 @@ Enhanced setup script for the Taxonomic Database
 Includes support for the modular architecture
 """
 import os
+import sys
 import argparse
 import subprocess
 import shutil
 import json
-from db_controller import DatabaseController
+
+# Add the parent directory to Python's module search path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from core.db_controller import DatabaseController
 
 def create_docker_compose():
     """Create docker-compose.yml file"""
