@@ -1,0 +1,228 @@
+/* Phylogenetic Tree Styles */
+
+.taxonomy-path {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.taxonomy-path h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+#current-path .badge {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+#current-path .badge.bg-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+}
+
+#current-path .badge.bg-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%) !important;
+}
+
+/* Rank options styling */
+#rank-options {
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+#rank-options button {
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 500;
+    border: 2px solid;
+    min-width: 120px;
+}
+
+#rank-options .btn-outline-primary {
+    border-color: #0d6efd;
+    color: #0d6efd;
+    background: white;
+}
+
+#rank-options .btn-outline-primary:hover {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.3);
+}
+
+#rank-options .btn-outline-secondary {
+    border-color: #6c757d;
+    color: #6c757d;
+    background: white;
+}
+
+#rank-options .btn-outline-secondary:hover {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
+}
+
+/* Phylogenetic level indicator */
+.phylo-level-indicator {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 20px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    position: relative;
+}
+
+.phylo-level-indicator::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    right: 20px;
+    height: 3px;
+    background: linear-gradient(90deg, #dee2e6 0%, #adb5bd 50%, #dee2e6 100%);
+    z-index: 1;
+    border-radius: 2px;
+}
+
+.phylo-level-indicator .level-item {
+    flex: 1;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.phylo-level-indicator .level-item .level-marker {
+    width: 40px;
+    height: 40px;
+    background: white;
+    border: 3px solid #dee2e6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 8px auto;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.phylo-level-indicator .level-item small {
+    font-size: 0.8rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.phylo-level-indicator .level-item.active .level-marker {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    border-color: #0d6efd;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+}
+
+.phylo-level-indicator .level-item.active small {
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+.phylo-level-indicator .level-item.completed .level-marker {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border-color: #198754;
+    color: white;
+    box-shadow: 0 3px 10px rgba(25, 135, 84, 0.3);
+}
+
+.phylo-level-indicator .level-item.completed small {
+    color: #198754;
+    font-weight: 600;
+}
+
+/* Tree control buttons */
+#show-species-btn {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border: none;
+    border-radius: 10px;
+    padding: 12px 24px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#show-species-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+}
+
+#reset-tree-btn, #debug-tree-btn {
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+#reset-tree-btn:hover, #debug-tree-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Loading spinner in rank options */
+#rank-loading {
+    width: 24px;
+    height: 24px;
+}
+
+/* Current rank display */
+.card-header span {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Responsive design for phylo tree */
+@media (max-width: 768px) {
+    .phylo-level-indicator {
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .phylo-level-indicator .level-item .level-marker {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
+    }
+    
+    .phylo-level-indicator .level-item small {
+        font-size: 0.7rem;
+    }
+    
+    #rank-options {
+        gap: 8px;
+    }
+    
+    #rank-options button {
+        padding: 10px 16px;
+        font-size: 0.9rem;
+        min-width: 100px;
+    }
+    
+    .taxonomy-path {
+        padding: 15px;
+    }
+    
+    #current-path .badge {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+        margin-right: 6px;
+        margin-bottom: 6px;
+    }
+}

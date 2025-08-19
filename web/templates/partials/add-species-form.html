@@ -1,0 +1,111 @@
+<h3>Add New Species</h3>
+<form id="add-species-form">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Taxonomy</h4>
+            <div class="mb-3">
+                <label for="domain" class="form-label">Domain <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="domain" name="domain" required>
+                <div class="form-text">e.g., Eukarya, Bacteria, Archaea</div>
+            </div>
+            <div class="mb-3">
+                <label for="kingdom" class="form-label">Kingdom <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="kingdom" name="kingdom" required>
+                <div class="form-text">e.g., Animalia, Plantae, Fungi</div>
+            </div>
+            <div class="mb-3">
+                <label for="phylum" class="form-label">Phylum <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="phylum" name="phylum" required>
+                <div class="form-text">e.g., Chordata, Arthropoda</div>
+            </div>
+            <div class="mb-3">
+                <label for="class" class="form-label">Class <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="class" name="class" required>
+                <div class="form-text">e.g., Mammalia, Insecta</div>
+            </div>
+            <div class="mb-3">
+                <label for="order" class="form-label">Order <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="order" name="order" required>
+                <div class="form-text">e.g., Primates, Carnivora</div>
+            </div>
+            <div class="mb-3">
+                <label for="family" class="form-label">Family <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="family" name="family" required>
+                <div class="form-text">e.g., Felidae, Canidae</div>
+            </div>
+            <div class="mb-3">
+                <label for="genus" class="form-label">Genus <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="genus" name="genus" required>
+                <div class="form-text">e.g., Panthera, Canis</div>
+            </div>
+            <div class="mb-3">
+                <label for="species-name" class="form-label">Species <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="species-name" name="species_name" required>
+                <div class="form-text">e.g., leo, lupus</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h4>Species Details</h4>
+            <div class="mb-3">
+                <label for="common-name" class="form-label">Common Name</label>
+                <input type="text" class="form-control" id="common-name" name="common_name">
+                <div class="form-text">e.g., Lion, Gray Wolf</div>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                <div class="form-text">Brief description of the species</div>
+            </div>
+            <div class="mb-3">
+                <label for="image-url" class="form-label">Image URL</label>
+                <input type="url" class="form-control" id="image-url" name="image_url">
+                <div class="form-text">URL to an image of the species</div>
+            </div>
+            <div class="mb-3">
+                <label for="distribution-map-url" class="form-label">Distribution Map URL</label>
+                <input type="url" class="form-control" id="distribution-map-url" name="distribution_map_url">
+                <div class="form-text">URL to a distribution map</div>
+            </div>
+            <div class="mb-3">
+                <label for="discovery-year" class="form-label">Discovery Year</label>
+                <input type="number" class="form-control" id="discovery-year" name="discovery_year" min="1700" max="2024">
+                <div class="form-text">Year the species was first described</div>
+            </div>
+            <div class="mb-3">
+                <label for="conservation-status" class="form-label">Conservation Status</label>
+                <select class="form-control" id="conservation-status" name="conservation_status">
+                    <option value="">-- Select Status --</option>
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+                <div class="form-text">IUCN conservation status</div>
+            </div>
+            <div class="mb-3">
+                <label for="habitat" class="form-label">Habitat</label>
+                <input type="text" class="form-control" id="habitat" name="habitat">
+                <div class="form-text">Primary habitat of the species</div>
+            </div>
+            <div class="mb-3">
+                <label for="tags" class="form-label">Tags</label>
+                <input type="text" class="form-control" id="tags" name="tags">
+                <div class="form-text">Comma-separated tags for categorization</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <small class="text-muted"><span class="text-danger">*</span> Required fields</small>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary me-2" onclick="document.getElementById('add-species-form').reset()">
+                        Clear Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i>
+                        Add Species
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

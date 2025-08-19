@@ -1,0 +1,75 @@
+<h3>Phylogenetic Tree Explorer</h3>
+<p class="mb-4">Navigate the tree of life by selecting taxonomic ranks. Click "Show Species" at any point to view all species within the selected classification.</p>
+
+<!-- Progress indicator -->
+<div class="phylo-level-indicator mb-4">
+    <div class="level-item" id="level-domain">
+        <div class="level-marker">D</div>
+        <small>Domain</small>
+    </div>
+    <div class="level-item" id="level-kingdom">
+        <div class="level-marker">K</div>
+        <small>Kingdom</small>
+    </div>
+    <div class="level-item" id="level-phylum">
+        <div class="level-marker">P</div>
+        <small>Phylum</small>
+    </div>
+    <div class="level-item" id="level-class">
+        <div class="level-marker">C</div>
+        <small>Class</small>
+    </div>
+    <div class="level-item" id="level-order">
+        <div class="level-marker">O</div>
+        <small>Order</small>
+    </div>
+    <div class="level-item" id="level-family">
+        <div class="level-marker">F</div>
+        <small>Family</small>
+    </div>
+    <div class="level-item" id="level-genus">
+        <div class="level-marker">G</div>
+        <small>Genus</small>
+    </div>
+    <div class="level-item" id="level-species">
+        <div class="level-marker">S</div>
+        <small>Species</small>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="taxonomy-path card p-3 mb-3">
+            <h6>Current Selection:</h6>
+            <div id="current-path" class="d-flex flex-wrap align-items-center">
+                <span class="badge bg-secondary me-2 mb-2">All Life</span>
+            </div>
+        </div>
+        
+        <button id="show-species-btn" class="btn btn-success mb-3">Show Species</button>
+        <button id="reset-tree-btn" class="btn btn-outline-secondary mb-3 ms-2">Reset</button>
+        <button id="debug-tree-btn" class="btn btn-outline-danger mb-3 ms-2">Debug Tree</button>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span id="current-rank">Domain</span>
+                <div class="spinner-border spinner-border-sm text-primary d-none" id="rank-loading" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="rank-options" class="d-flex flex-wrap">
+                    <!-- Rank options will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="phylo-species-container" class="row">
+    <!-- Species cards will be loaded here when Show Species is clicked -->
+</div>
