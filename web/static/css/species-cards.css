@@ -120,6 +120,126 @@
     box-shadow: 0 4px 8px rgba(13, 110, 253, 0.25);
 }
 
+/* Clickable taxonomy styling */
+.taxonomy-link {
+    color: #0d6efd;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    padding: 2px 6px;
+    display: inline-block;
+    position: relative;
+    font-weight: 500;
+}
+
+.taxonomy-link:hover {
+    background-color: #e7f3ff;
+    color: #0a58ca;
+    text-decoration: underline;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.15);
+}
+
+.taxonomy-link:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(13, 110, 253, 0.2);
+}
+
+.taxonomy-link::after {
+    content: '\F1C5'; /* Bootstrap icon for link */
+    font-family: 'bootstrap-icons';
+    font-size: 0.8em;
+    margin-left: 4px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.taxonomy-link:hover::after {
+    opacity: 0.6;
+}
+
+/* Filter indicator styles */
+#taxonomy-filter-indicator {
+    background-color: #e7f3ff;
+    border: 1px solid #b3d9ff;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    display: none;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    color: #0a58ca;
+}
+
+#taxonomy-filter-indicator.show {
+    display: flex;
+}
+
+#taxonomy-filter-indicator i {
+    font-size: 1.1em;
+    color: #0d6efd;
+}
+
+#taxonomy-filter-indicator .btn {
+    font-size: 0.85em;
+    padding: 4px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+#taxonomy-filter-indicator .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(13, 110, 253, 0.2);
+}
+
+/* Modal taxonomy table enhancements */
+.modal .table th {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    font-weight: 600;
+    color: #495057;
+    width: 30%;
+    vertical-align: middle;
+}
+
+.modal .table td {
+    border-color: #dee2e6;
+    vertical-align: middle;
+    padding: 8px 12px;
+}
+
+.modal .table-sm th,
+.modal .table-sm td {
+    padding: 6px 10px;
+    font-size: 0.9em;
+}
+
+/* Scientific name styling in modals */
+.modal .scientific-name {
+    font-style: italic;
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    font-weight: 500;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+/* Enhanced image styling in modals */
+.modal img.clickable-image {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.modal img.clickable-image:hover {
+    border-color: #0d6efd;
+    transform: scale(1.02);
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+}
+
 /* Empty state */
 .no-species {
     text-align: center;
@@ -131,6 +251,23 @@
     font-size: 3rem;
     margin-bottom: 20px;
     opacity: 0.5;
+}
+
+.no-species h5 {
+    color: #495057;
+    margin-bottom: 15px;
+}
+
+.no-species .btn {
+    margin-top: 15px;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+}
+
+/* Loading state improvements */
+.spinner-border {
+    color: #0d6efd;
 }
 
 /* Responsive design for species cards */
@@ -153,5 +290,102 @@
         padding: 3px 10px;
         margin-right: 6px;
         margin-bottom: 4px;
+    }
+
+    .taxonomy-link {
+        padding: 2px 4px;
+        font-size: 0.9em;
+    }
+
+    .taxonomy-link::after {
+        display: none; /* Hide icon on mobile */
+    }
+
+    #taxonomy-filter-indicator {
+        padding: 10px 12px;
+        font-size: 0.9em;
+        flex-direction: column;
+        text-align: center;
+        gap: 8px;
+    }
+
+    .modal .table th {
+        font-size: 0.85em;
+        padding: 6px 8px;
+    }
+
+    .modal .table td {
+        font-size: 0.85em;
+        padding: 6px 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal .row > div {
+        margin-bottom: 20px;
+    }
+
+    .species-card img {
+        max-height: 150px;
+    }
+
+    .taxonomy-link {
+        display: block;
+        text-align: left;
+        margin: 2px 0;
+        padding: 4px 6px;
+    }
+
+    #taxonomy-filter-indicator {
+        font-size: 0.85em;
+        padding: 8px 10px;
+    }
+}
+
+/* Accessibility improvements */
+.taxonomy-link:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+    background-color: #e7f3ff;
+}
+
+.taxonomy-link[aria-pressed="true"] {
+    background-color: #0d6efd;
+    color: white;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .taxonomy-link {
+        border: 1px solid currentColor;
+    }
+    
+    .taxonomy-link:hover {
+        background-color: #000;
+        color: #fff;
+    }
+    
+    .species-card {
+        border: 2px solid #000;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .species-card,
+    .taxonomy-link,
+    .tag,
+    .btn {
+        transition: none;
+    }
+    
+    .species-card:hover,
+    .taxonomy-link:hover,
+    .modal img.clickable-image:hover {
+        transform: none;
     }
 }
