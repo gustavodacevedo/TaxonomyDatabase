@@ -1129,102 +1129,277 @@ function loadSpecies(searchTerm = '', tagName = '') {
         }
         
         // View species details
-        function viewSpeciesDetails(speciesId) {
-            fetch(`/api/species/${speciesId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Species details data:", data); // Debug line
-                    
-                    // Create a modal to display detailed information
-                    const modal = document.createElement('div');
-                    modal.className = 'modal fade';
-                    modal.id = 'speciesModal';
-                    modal.setAttribute('tabindex', '-1');
-                    
-                    const tagsHtml = Array.isArray(data.tags) 
-                        ? data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
-                        : '';
-                    
-                    // Create distribution map section
-                    const distributionMapSection = data.distribution_map_url 
-                        ? `<div class="mt-3">
-                             <h6>Distribution Map</h6>
-                             <img src="${data.distribution_map_url}" alt="Distribution map for ${data.common_name || ''}" class="img-fluid border rounded">
-                           </div>`
-                        : '';
-                    
-                    // Handle different field names for species name
-                    const speciesName = data.species_name || data.name || '';
-                    const genusName = data.genus_name || '';
-                    
-                    // Create taxonomic tables only if data is available
-                    const taxonomyTable = data.domain_name 
-                        ? `<h6>Taxonomic Classification</h6>
-                           <table class="table table-bordered">
-                               ${data.domain_name ? `<tr><th>Domain</th><td>${data.domain_name}</td></tr>` : ''}
-                               ${data.kingdom_name ? `<tr><th>Kingdom</th><td>${data.kingdom_name}</td></tr>` : ''}
-                               ${data.phylum_name ? `<tr><th>Phylum</th><td>${data.phylum_name}</td></tr>` : ''}
-                               ${data.class_name ? `<tr><th>Class</th><td>${data.class_name}</td></tr>` : ''}
-                               ${data.order_name ? `<tr><th>Order</th><td>${data.order_name}</td></tr>` : ''}
-                               ${data.family_name ? `<tr><th>Family</th><td>${data.family_name}</td></tr>` : ''}
-                               ${genusName ? `<tr><th>Genus</th><td>${genusName}</td></tr>` : ''}
-                               ${speciesName ? `<tr><th>Species</th><td>${speciesName}</td></tr>` : ''}
-                           </table>`
-                        : '';
-                    
-                    // Create additional info table only if data is available
-                    const additionalInfoTable = (data.discovery_year || data.conservation_status || data.habitat || data.geographic_distribution)
-                        ? `<h6>Additional Information</h6>
-                           <table class="table table-bordered">
-                               ${data.discovery_year ? `<tr><th>Discovery Year</th><td>${data.discovery_year}</td></tr>` : ''}
-                               ${data.conservation_status ? `<tr><th>Conservation Status</th><td>${data.conservation_status}</td></tr>` : ''}
-                               ${data.habitat ? `<tr><th>Habitat</th><td>${data.habitat}</td></tr>` : ''}
-                               ${data.geographic_distribution ? `<tr><th>Geographic Distribution</th><td>${data.geographic_distribution}</td></tr>` : ''}
-                           </table>`
-                        : '';
-                    
-                    modal.innerHTML = `
-                        <div class="modal-dialog modal-lg">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">${data.common_name || 'Unknown'}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <h6 class="scientific-name">${genusName} ${speciesName}</h6>
-                                    
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            ${data.image_url ? `<img src="${data.image_url}" alt="${data.common_name || ''}" class="img-fluid mb-3">` : ''}
-                                            <p>${data.description || 'No description available.'}</p>
-                                            <div class="tags mb-3">
-                                                ${tagsHtml}
-                                            </div>
-                                            ${distributionMapSection}
-                                        </div>
-                                        <div class="col-md-6">
-                                            ${taxonomyTable}
-                                            ${additionalInfoTable}
-                                        </div>
+       function viewSpeciesDetails(speciesId) {
+    fetch(`/api/species/${speciesId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Species details data:", data); // Debug line
+            
+            // Create a modal to display detailed information
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.id = 'speciesModal';
+            modal.setAttribute('tabindex', '-1');
+            
+            const tagsHtml = Array.isArray(data.tags) 
+                ? data.tags.map(tag => `<span class="tag">${tag}</span>`).join('')
+                : '';
+            
+            // Create distribution map section with clickable image
+            const distributionMapSection = data.distribution_map_url 
+                ? `<div class="mt-3">
+                     <h6>Distribution Map</h6>
+                     <img src="${data.distribution_map_url}" 
+                          alt="Distribution map for ${data.common_name || ''}" 
+                          class="img-fluid border rounded clickable-image" 
+                          style="cursor: pointer;"
+                          onclick="openImageFullscreen('${data.distribution_map_url}', 'Distribution Map - ${data.common_name || ''}')">
+                   </div>`
+                : '';
+            
+            // Handle different field names for species name
+            const speciesName = data.species_name || data.name || '';
+            const genusName = data.genus_name || '';
+            
+            // Create taxonomic tables only if data is available
+            const taxonomyTable = data.domain_name 
+                ? `<h6>Taxonomic Classification</h6>
+                   <table class="table table-bordered">
+                       ${data.domain_name ? `<tr><th>Domain</th><td>${data.domain_name}</td></tr>` : ''}
+                       ${data.kingdom_name ? `<tr><th>Kingdom</th><td>${data.kingdom_name}</td></tr>` : ''}
+                       ${data.phylum_name ? `<tr><th>Phylum</th><td>${data.phylum_name}</td></tr>` : ''}
+                       ${data.class_name ? `<tr><th>Class</th><td>${data.class_name}</td></tr>` : ''}
+                       ${data.order_name ? `<tr><th>Order</th><td>${data.order_name}</td></tr>` : ''}
+                       ${data.family_name ? `<tr><th>Family</th><td>${data.family_name}</td></tr>` : ''}
+                       ${genusName ? `<tr><th>Genus</th><td>${genusName}</td></tr>` : ''}
+                       ${speciesName ? `<tr><th>Species</th><td>${speciesName}</td></tr>` : ''}
+                   </table>`
+                : '';
+            
+            // Create additional info table only if data is available
+            const additionalInfoTable = (data.discovery_year || data.conservation_status || data.habitat || data.geographic_distribution)
+                ? `<h6>Additional Information</h6>
+                   <table class="table table-bordered">
+                       ${data.discovery_year ? `<tr><th>Discovery Year</th><td>${data.discovery_year}</td></tr>` : ''}
+                       ${data.conservation_status ? `<tr><th>Conservation Status</th><td>${data.conservation_status}</td></tr>` : ''}
+                       ${data.habitat ? `<tr><th>Habitat</th><td>${data.habitat}</td></tr>` : ''}
+                       ${data.geographic_distribution ? `<tr><th>Geographic Distribution</th><td>${data.geographic_distribution}</td></tr>` : ''}
+                   </table>`
+                : '';
+            
+            // Create clickable species image
+            const speciesImage = data.image_url 
+                ? `<img src="${data.image_url}" 
+                        alt="${data.common_name || ''}" 
+                        class="img-fluid mb-3 clickable-image" 
+                        style="cursor: pointer;"
+                        onclick="openImageFullscreen('${data.image_url}', '${data.common_name || ''} - ${genusName} ${speciesName}')">`
+                : '';
+            
+            modal.innerHTML = `
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">${data.common_name || 'Unknown'}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6 class="scientific-name">${genusName} ${speciesName}</h6>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    ${speciesImage}
+                                    <p>${data.description || 'No description available.'}</p>
+                                    <div class="tags mb-3">
+                                        ${tagsHtml}
                                     </div>
+                                    ${distributionMapSection}
+                                </div>
+                                <div class="col-md-6">
+                                    ${taxonomyTable}
+                                    ${additionalInfoTable}
                                 </div>
                             </div>
                         </div>
-                    `;
-                    
-                    document.body.appendChild(modal);
-                    
-                    const modalInstance = new bootstrap.Modal(modal);
-                    modalInstance.show();
-                    
-                    modal.addEventListener('hidden.bs.modal', function() {
-                        modal.remove();
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading species details:', error);
-                });
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+            
+            modal.addEventListener('hidden.bs.modal', function() {
+                modal.remove();
+            });
+        })
+        .catch(error => {
+            console.error('Error loading species details:', error);
+        });
+}
+
+// Function to open images in fullscreen overlay
+function openImageFullscreen(imageUrl, imageTitle) {
+    console.log('Opening fullscreen image:', imageUrl, imageTitle); // Debug log
+    
+    // Remove any existing fullscreen overlays first
+    const existingOverlays = document.querySelectorAll('.image-fullscreen-overlay');
+    existingOverlays.forEach(overlay => overlay.remove());
+    
+    // Create fullscreen overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'image-fullscreen-overlay';
+    overlay.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.9);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 999999;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        backdrop-filter: blur(2px);
+    `;
+    
+    // Create image container
+    const imageContainer = document.createElement('div');
+    imageContainer.style.cssText = `
+        max-width: 95vw;
+        max-height: 95vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+    `;
+    
+    // Create the image
+    const image = document.createElement('img');
+    image.src = imageUrl;
+    image.alt = imageTitle;
+    image.style.cssText = `
+        max-width: 100%;
+        max-height: 85vh;
+        object-fit: contain;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        cursor: pointer;
+    `;
+    
+    // Create title
+    const title = document.createElement('div');
+    title.textContent = imageTitle || 'Image';
+    title.style.cssText = `
+        color: white;
+        margin-top: 15px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 500;
+        max-width: 80vw;
+        cursor: pointer;
+    `;
+    
+    // Create close instruction
+    const closeInstruction = document.createElement('div');
+    closeInstruction.textContent = 'Click anywhere to close';
+    closeInstruction.style.cssText = `
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+    `;
+    
+    // Assemble the overlay
+    imageContainer.appendChild(image);
+    imageContainer.appendChild(title);
+    imageContainer.appendChild(closeInstruction);
+    overlay.appendChild(imageContainer);
+    
+    // Close function
+    const closeOverlay = function() {
+        console.log('Closing overlay...'); // Debug log
+        closeImageFullscreen(overlay);
+    };
+    
+    // Add click event to the overlay itself (this will catch all clicks)
+    overlay.addEventListener('click', closeOverlay);
+    
+    // Close overlay on escape key
+    const escapeHandler = function(e) {
+        if (e.key === 'Escape') {
+            console.log('Escape pressed, closing...'); // Debug log
+            closeImageFullscreen(overlay);
+            document.removeEventListener('keydown', escapeHandler);
         }
+    };
+    document.addEventListener('keydown', escapeHandler);
+    
+    // Add to document and fade in
+    document.body.appendChild(overlay);
+    
+    // Prevent scrolling while overlay is open
+    document.body.style.overflow = 'hidden';
+    
+    // Force reflow before starting transition
+    overlay.offsetHeight;
+    overlay.style.opacity = '1';
+    
+    // Store handlers for cleanup
+    overlay.escapeHandler = escapeHandler;
+    overlay.closeHandler = closeOverlay;
+}
+
+// Function to close fullscreen image overlay
+function closeImageFullscreen(overlay) {
+    console.log('Closing fullscreen image...'); // Debug log
+    
+    if (!overlay || !overlay.parentNode) {
+        console.log('Overlay already removed or invalid');
+        return;
+    }
+    
+    overlay.style.opacity = '0';
+    
+    // Restore body scrolling
+    document.body.style.overflow = '';
+    
+    // Remove click handler to prevent multiple calls
+    if (overlay.closeHandler) {
+        overlay.removeEventListener('click', overlay.closeHandler);
+    }
+    
+    setTimeout(() => {
+        try {
+            if (overlay && overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+            // Clean up event listeners
+            if (overlay.escapeHandler) {
+                document.removeEventListener('keydown', overlay.escapeHandler);
+            }
+        } catch (e) {
+            console.log('Error removing overlay:', e);
+        }
+    }, 300);
+}
+
+// Test function to verify fullscreen works
+function testFullscreen() {
+    const testImageUrl = 'https://via.placeholder.com/800x600/0066cc/ffffff?text=Test+Image';
+    openImageFullscreen(testImageUrl, 'Test Image');
+}
+
+// Add test button functionality if in development
+if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    console.log('Development mode - fullscreen image test available via testFullscreen()');
+    window.testFullscreen = testFullscreen;
+}  
         
         // Export database
         function exportDatabase() {
