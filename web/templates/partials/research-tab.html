@@ -1,387 +1,85 @@
-<!-- Research Tab Content -->
-<div class="research-content">
-    <h3>Species Research Hub</h3>
-    <p class="mb-4">Advanced research tools for exploring taxonomic data, generating reports, and conducting comparative analysis.</p>
-
-    <!-- Research Tools Navigation -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="nav nav-pills" id="research-nav" role="tablist">
-                <button class="nav-link active" id="species-analytics-tab" data-bs-toggle="pill" data-bs-target="#species-analytics" type="button" role="tab">
-                    <i class="bi bi-graph-up"></i> Species Analytics
-                </button>
-                <button class="nav-link" id="comparative-analysis-tab" data-bs-toggle="pill" data-bs-target="#comparative-analysis" type="button" role="tab">
-                    <i class="bi bi-arrow-left-right"></i> Comparative Analysis
-                </button>
-                <button class="nav-link" id="taxonomy-reports-tab" data-bs-toggle="pill" data-bs-target="#taxonomy-reports" type="button" role="tab">
-                    <i class="bi bi-file-earmark-text"></i> Reports
-                </button>
-                <button class="nav-link" id="data-visualization-tab" data-bs-toggle="pill" data-bs-target="#data-visualization" type="button" role="tab">
-                    <i class="bi bi-pie-chart"></i> Visualizations
-                </button>
-            </div>
+<div class="diagram-container">
+    <h1 class="title">Urbanization Effects on Tropical Stream Ecosystems</h1>
+    
+    <!-- Level 1: Primary Driver -->
+    <div class="level level1">
+        <div class="level-label">PRIMARY DRIVER</div>
+        <div class="box">URBANIZATION<br><small>Land Use Change</small></div>
+    </div>
+    
+    <div class="arrow"></div>
+    
+    <!-- Level 2: Direct Environmental Impacts -->
+    <div class="level level2">
+        <div class="level-label">DIRECT IMPACTS</div>
+        <div class="multiple-boxes">
+            <div class="small-box">Hydrologic Regime<br>Alteration</div>
+            <div class="small-box">Water Quality<br>Degradation</div>
+            <div class="small-box">Riparian Habitat<br>Loss</div>
         </div>
     </div>
-
-    <!-- Research Tool Content -->
-    <div class="tab-content" id="research-content">
-        
-        <!-- Species Analytics -->
-        <div class="tab-pane fade show active" id="species-analytics" role="tabpanel">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="bi bi-pie-chart-fill text-primary"></i>
-                            Database Statistics
-                        </div>
-                        <div class="card-body">
-                            <div id="database-stats" class="row text-center">
-                                <div class="col-6 col-md-3 mb-3">
-                                    <div class="stat-item">
-                                        <div class="stat-number text-primary" id="total-species">-</div>
-                                        <div class="stat-label">Species</div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3 mb-3">
-                                    <div class="stat-item">
-                                        <div class="stat-number text-success" id="total-genera">-</div>
-                                        <div class="stat-label">Genera</div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3 mb-3">
-                                    <div class="stat-item">
-                                        <div class="stat-number text-info" id="total-families">-</div>
-                                        <div class="stat-label">Families</div>
-                                    </div>
-                                </div>
-                                <div class="col-6 col-md-3 mb-3">
-                                    <div class="stat-item">
-                                        <div class="stat-number text-warning" id="total-tags">-</div>
-                                        <div class="stat-label">Tags</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn btn-outline-primary btn-sm" onclick="researchManager.refreshStats()">
-                                <i class="bi bi-arrow-clockwise"></i> Refresh
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-search text-success"></i>
-                            Quick Search & Filter
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Search by Conservation Status</label>
-                                <select class="form-select" id="conservation-filter">
-                                    <option value="">All Statuses</option>
-                                    <option value="Endangered">Endangered</option>
-                                    <option value="Critically Endangered">Critically Endangered</option>
-                                    <option value="Vulnerable">Vulnerable</option>
-                                    <option value="Near Threatened">Near Threatened</option>
-                                    <option value="Least Concern">Least Concern</option>
-                                    <option value="Data Deficient">Data Deficient</option>
-                                    <option value="Not Evaluated">Not Evaluated</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Filter by Discovery Year Range</label>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <input type="number" class="form-control" id="year-from" placeholder="From" min="1700" max="2024">
-                                    </div>
-                                    <div class="col-6">
-                                        <input type="number" class="form-control" id="year-to" placeholder="To" min="1700" max="2024">
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary" onclick="researchManager.applyAdvancedFilters()">
-                                <i class="bi bi-funnel"></i> Apply Filters
-                            </button>
-                            <button class="btn btn-outline-secondary ms-2" onclick="researchManager.clearAdvancedFilters()">
-                                Clear
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="bi bi-graph-up text-info"></i>
-                            Discovery Timeline
-                        </div>
-                        <div class="card-body">
-                            <div id="discovery-timeline-chart" class="chart-container">
-                                <div class="text-center text-muted py-4">
-                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                    Loading timeline data...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-tags text-warning"></i>
-                            Tag Distribution
-                        </div>
-                        <div class="card-body">
-                            <div id="tag-distribution-chart" class="chart-container">
-                                <div class="text-center text-muted py-4">
-                                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                                    Loading tag data...
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    
+    <div class="arrow"></div>
+    
+    <!-- Key Finding Box -->
+    <div class="key-finding">
+        <h3>Stream Discharge = Master Variable</h3>
+        <p><strong>80% of total watershed variation</strong> explained by one axis correlated with stream discharge<br>
+        <em>Pérez-Reyes et al. (2015)</em></p>
+    </div>
+    
+    <div class="arrow"></div>
+    
+    <!-- Level 3: Physical/Chemical Changes -->
+    <div class="level level3">
+        <div class="level-label">PHYSICAL CHANGES</div>
+        <div class="multiple-boxes">
+            <div class="small-box">Increased Discharge<br>& Runoff</div>
+            <div class="small-box">Sedimentation<br>& Substrate Loss</div>
+            <div class="small-box">Chemical<br>Contamination</div>
+            <div class="small-box">Reduced<br>Dissolved O₂</div>
         </div>
-
-        <!-- Comparative Analysis -->
-        <div class="tab-pane fade" id="comparative-analysis" role="tabpanel">
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-arrow-left-right text-primary"></i>
-                            Species Comparison Tool
-                        </div>
-                        <div class="card-body">
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label class="form-label">Select First Species</label>
-                                    <select class="form-select" id="species-select-1">
-                                        <option value="">Choose a species...</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">Select Second Species</label>
-                                    <select class="form-select" id="species-select-2">
-                                        <option value="">Choose a species...</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button class="btn btn-primary mb-3" onclick="researchManager.compareSpecies()">
-                                <i class="bi bi-arrow-left-right"></i> Compare Species
-                            </button>
-                            
-                            <div id="comparison-results" class="comparison-container" style="display: none;">
-                                <!-- Comparison results will be displayed here -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-list-check text-success"></i>
-                            Taxonomic Relationships
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Select Taxonomic Rank</label>
-                                <select class="form-select" id="relationship-rank">
-                                    <option value="family">Family</option>
-                                    <option value="order">Order</option>
-                                    <option value="class">Class</option>
-                                    <option value="phylum">Phylum</option>
-                                    <option value="kingdom">Kingdom</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Select Group</label>
-                                <select class="form-select" id="relationship-group">
-                                    <option value="">Choose a group...</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-outline-primary" onclick="researchManager.analyzeRelationships()">
-                                <i class="bi bi-diagram-3"></i> Analyze
-                            </button>
-                            
-                            <div id="relationship-results" class="mt-3">
-                                <!-- Relationship analysis results -->
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+    
+    <div class="arrow"></div>
+    
+    <!-- Level 4: Biological Response -->
+    <div class="level level4">
+        <div class="level-label">BIOLOGICAL RESPONSE</div>
+        <div class="multiple-boxes">
+            <div class="small-box">Decapod Community<br>Decline</div>
+            <div class="small-box">Native Species<br>Replacement</div>
+            <div class="small-box">Habitat<br>Homogenization</div>
         </div>
-
-        <!-- Reports -->
-        <div class="tab-pane fade" id="taxonomy-reports" role="tabpanel">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card mb-4">
-                        <div class="card-header">
-                            <i class="bi bi-file-earmark-bar-graph text-primary"></i>
-                            Generate Custom Report
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <label class="form-label">Report Type</label>
-                                <select class="form-select" id="report-type">
-                                    <option value="taxonomic-summary">Taxonomic Summary</option>
-                                    <option value="conservation-report">Conservation Status Report</option>
-                                    <option value="discovery-trends">Discovery Trends</option>
-                                    <option value="habitat-analysis">Habitat Analysis</option>
-                                    <option value="comprehensive">Comprehensive Database Report</option>
-                                </select>
-                            </div>
-                            <div class="mb-3" id="report-filters">
-                                <label class="form-label">Taxonomic Scope</label>
-                                <select class="form-select" id="report-scope">
-                                    <option value="all">All Taxa</option>
-                                    <option value="domain">By Domain</option>
-                                    <option value="kingdom">By Kingdom</option>
-                                    <option value="phylum">By Phylum</option>
-                                    <option value="class">By Class</option>
-                                    <option value="order">By Order</option>
-                                    <option value="family">By Family</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Output Format</label>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="report-format" id="format-html" value="html" checked>
-                                    <label class="form-check-label" for="format-html">
-                                        HTML (View in browser)
-                                    </label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="report-format" id="format-json" value="json">
-                                    <label class="form-check-label" for="format-json">
-                                        JSON (Download file)
-                                    </label>
-                                </div>
-                            </div>
-                            <button class="btn btn-success" onclick="researchManager.generateReport()">
-                                <i class="bi bi-file-earmark-plus"></i> Generate Report
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-clock-history text-info"></i>
-                            Recent Reports
-                        </div>
-                        <div class="card-body">
-                            <div id="recent-reports">
-                                <p class="text-muted">No recent reports generated.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-eye text-success"></i>
-                            Report Preview
-                        </div>
-                        <div class="card-body">
-                            <div id="report-preview" class="report-preview-container">
-                                <div class="text-center text-muted py-5">
-                                    <i class="bi bi-file-earmark-text" style="font-size: 3rem; opacity: 0.3;"></i>
-                                    <p class="mt-3">Select a report type and click "Generate Report" to see a preview</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+    
+    <!-- Species Highlight -->
+    <div class="species-highlight">
+        <h4>🦐 Tropical Stream Specialists at Risk</h4>
+        <div class="species-list">
+            Caridean Shrimp: Atyidae, Palaemonidae, Xiphocarididae<br>
+            Freshwater Crabs: Grapsidae, Pseudothelphusidae<br>
+            Key Genera: <em>Atya, Macrobrachium, Xiphocaris, Epilobocera</em>
         </div>
-
-        <!-- Data Visualizations -->
-        <div class="tab-pane fade" id="data-visualization" role="tabpanel">
-            <div class="row mb-4">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <i class="bi bi-graph-up-arrow text-primary"></i>
-                            Visualization Controls
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <label class="form-label">Chart Type</label>
-                                    <select class="form-select" id="chart-type">
-                                        <option value="taxonomic-tree">Taxonomic Tree</option>
-                                        <option value="species-distribution">Species Distribution</option>
-                                        <option value="conservation-pie">Conservation Status</option>
-                                        <option value="discovery-timeline">Discovery Timeline</option>
-                                        <option value="habitat-bar">Habitat Distribution</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Data Scope</label>
-                                    <select class="form-select" id="viz-scope">
-                                        <option value="all">All Data</option>
-                                        <option value="kingdom">By Kingdom</option>
-                                        <option value="phylum">By Phylum</option>
-                                        <option value="class">By Class</option>
-                                        <option value="recent">Recent Discoveries</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3">
-                                    <label class="form-label">Color Scheme</label>
-                                    <select class="form-select" id="color-scheme">
-                                        <option value="default">Default</option>
-                                        <option value="viridis">Viridis</option>
-                                        <option value="cool">Cool Tones</option>
-                                        <option value="warm">Warm Tones</option>
-                                        <option value="high-contrast">High Contrast</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 d-flex align-items-end">
-                                    <button class="btn btn-primary w-100" onclick="researchManager.generateVisualization()">
-                                        <i class="bi bi-bar-chart"></i> Generate
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12">
-                    <div class="card">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span>
-                                <i class="bi bi-pie-chart text-success"></i>
-                                Visualization Output
-                            </span>
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-secondary" onclick="researchManager.downloadVisualization('png')" title="Download as PNG">
-                                    <i class="bi bi-download"></i> PNG
-                                </button>
-                                <button class="btn btn-outline-secondary" onclick="researchManager.downloadVisualization('svg')" title="Download as SVG">
-                                    <i class="bi bi-download"></i> SVG
-                                </button>
-                                <button class="btn btn-outline-secondary" onclick="researchManager.fullscreenVisualization()" title="View Fullscreen">
-                                    <i class="bi bi-fullscreen"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="visualization-container" class="visualization-area">
-                                <div class="text-center text-muted py-5">
-                                    <i class="bi bi-bar-chart-fill" style="font-size: 4rem; opacity: 0.3;"></i>
-                                    <h5 class="mt-3">Data Visualization</h5>
-                                    <p>Select visualization options above and click "Generate" to create interactive charts</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    </div>
+    
+    <div class="arrow"></div>
+    
+    <!-- Level 5: Ecosystem Function Loss -->
+    <div class="level level5">
+        <div class="level-label">FUNCTIONAL LOSS</div>
+        <div class="multiple-boxes">
+            <div class="small-box">Primary Production<br>Disruption</div>
+            <div class="small-box">Leaf-Litter Processing<br>Decline</div>
+            <div class="small-box">Food Web<br>Collapse</div>
         </div>
+    </div>
+    
+    <!-- Conservation Solution -->
+    <div class="key-finding" style="border-color: #27ae60; margin-top: 40px;">
+        <h3 style="color: #27ae60;">💡 MANAGEMENT SOLUTION</h3>
+        <p><strong>5-meter Riparian Forest Buffers</strong><br>
+        Significantly improve macroinvertebrate diversity and pollution-sensitive taxa<br>
+        <em>de Jesús-Crespo & Ramírez (2011)</em></p>
     </div>
 </div>
