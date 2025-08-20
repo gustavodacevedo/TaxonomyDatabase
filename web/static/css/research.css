@@ -1,0 +1,437 @@
+/* Research Tab Specific Styles */
+
+.research-content {
+    min-height: 600px;
+}
+
+/* Research Navigation Pills */
+#research-nav .nav-link {
+    border-radius: 20px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+#research-nav .nav-link:hover {
+    background-color: #e7f3ff;
+    color: #0d6efd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(13, 110, 253, 0.15);
+}
+
+#research-nav .nav-link.active {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    color: white;
+    border-color: #0d6efd;
+    box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+}
+
+#research-nav .nav-link i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* Statistics Cards */
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Chart Containers */
+.chart-container {
+    min-height: 300px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chart-placeholder {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.visualization-area {
+    min-height: 400px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+    position: relative;
+}
+
+/* Timeline Chart Styles */
+.timeline-chart {
+    display: flex;
+    align-items: end;
+    justify-content: center;
+    padding: 20px 0;
+    overflow-x: auto;
+}
+
+.timeline-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 2px;
+}
+
+/* Comparison Results */
+.comparison-container {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.comparison-container .card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.comparison-container .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.comparison-container .scientific-name {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+}
+
+/* Report Preview */
+.report-preview-container {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    border: 1px solid #e9ecef;
+}
+
+.report-content {
+    line-height: 1.6;
+}
+
+.report-header {
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.report-header h4 {
+    color: #212529;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.report-body h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.report-body ul {
+    padding-left: 20px;
+}
+
+.report-body li {
+    margin-bottom: 5px;
+}
+
+/* Filter Controls */
+.research-content .form-select,
+.research-content .form-control {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease;
+}
+
+.research-content .form-select:focus,
+.research-content .form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Advanced Filter Indicator */
+#research-filter-indicator {
+    background: linear-gradient(135deg, #d1ecf1 0%, #c3e6f0 100%);
+    border: 1px solid #bee5eb;
+    border-radius: 10px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+}
+
+#research-filter-indicator i {
+    color: #0c5460;
+    font-size: 1.1em;
+}
+
+#research-filter-indicator .btn {
+    font-size: 0.85em;
+    padding: 6px 12px;
+    border-radius: 6px;
+}
+
+/* Habitat Bars */
+.habitat-bars .progress {
+    height: 8px;
+    border-radius: 4px;
+    background-color: #e9ecef;
+}
+
+.habitat-bars .progress-bar {
+    border-radius: 4px;
+    transition: width 0.6s ease;
+}
+
+/* Relationship Analysis Results */
+#relationship-results .card {
+    border: none;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#relationship-results .alert {
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #d1ecf1 0%, #c3e6f0 100%);
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+}
+
+/* Recent Reports */
+#recent-reports .border-bottom {
+    border-color: #e9ecef !important;
+    transition: all 0.2s ease;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+#recent-reports .border-bottom:hover {
+    background-color: #f8f9fa;
+    transform: translateX(5px);
+}
+
+/* Visualization Controls */
+.visualization-area .btn-group .btn {
+    border-radius: 6px;
+    font-size: 0.85em;
+    padding: 6px 12px;
+    transition: all 0.2s ease;
+}
+
+.visualization-area .btn-group .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Species Selects */
+#species-select-1,
+#species-select-2 {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Progress Bars with Animation */
+.research-content .progress-bar {
+    background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+    transition: width 0.8s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.research-content .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Conservation Status Colors */
+.research-content .badge {
+    font-size: 0.8em;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #research-nav {
+        flex-direction: column;
+    }
+    
+    #research-nav .nav-link {
+        margin-right: 0;
+        text-align: center;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .chart-container,
+    .visualization-area {
+        padding: 15px;
+        min-height: 250px;
+    }
+    
+    .comparison-container {
+        padding: 15px;
+    }
+    
+    .report-preview-container {
+        min-height: 300px;
+        max-height: 400px;
+        padding: 15px;
+    }
+    
+    .timeline-chart {
+        padding: 10px 0;
+    }
+    
+    .research-content .row .col-md-6,
+    .research-content .row .col-md-4,
+    .research-content .row .col-md-3 {
+        margin-bottom: 20px;
+    }
+}
+
+@media (max-width: 576px) {
+    .research-content h3 {
+        font-size: 1.5rem;
+    }
+    
+    .stat-item {
+        padding: 10px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
+    }
+    
+    .chart-container,
+    .visualization-area {
+        min-height: 200px;
+        padding: 10px;
+    }
+    
+    .report-preview-container {
+        padding: 10px;
+    }
+    
+    .comparison-container .card {
+        margin-bottom: 15px;
+    }
+    
+    .btn-group-sm .btn {
+        font-size: 0.75em;
+        padding: 4px 8px;
+    }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+    .research-content .card {
+        border: 2px solid #000;
+    }
+    
+    .research-content .btn {
+        border: 2px solid currentColor;
+    }
+    
+    .stat-item {
+        border: 1px solid #000;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    .research-content *,
+    .research-content *::before,
+    .research-content *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .research-content .progress-bar::after {
+        animation: none;
+    }
+    
+    .research-content .nav-link:hover,
+    .research-content .stat-item:hover,
+    .research-content .card:hover {
+        transform: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .research-content .btn,
+    .research-content .nav-pills,
+    .research-content .spinner-border {
+        display: none !important;
+    }
+    
+    .research-content .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .research-content {
+        background: white !important;
+    }
+    
+    .chart-container,
+    .visualization-area {
+        background: white !important;
+        border: 1px solid #000;
+    }
+}

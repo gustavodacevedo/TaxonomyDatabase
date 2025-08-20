@@ -14,6 +14,7 @@
     <link href="/static/css/phylo-tree.css" rel="stylesheet">
     <link href="/static/css/species-cards.css" rel="stylesheet">
     <link href="/static/css/image-viewer.css" rel="stylesheet">
+    <link href="/static/css/research.css" rel="stylesheet">
 </head>
 <body>
     <div class="container mt-4">
@@ -22,16 +23,29 @@
         <!-- Navigation Tabs -->
         <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="explorer-tab" data-bs-toggle="tab" data-bs-target="#explorer" type="button" role="tab">Explorer</button>
+                <button class="nav-link active" id="explorer-tab" data-bs-toggle="tab" data-bs-target="#explorer" type="button" role="tab">
+                    <i class="bi bi-search"></i> Explorer
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="phylo-tab" data-bs-toggle="tab" data-bs-target="#phylo" type="button" role="tab">Phylogenetic Tree</button>
+                <button class="nav-link" id="phylo-tab" data-bs-toggle="tab" data-bs-target="#phylo" type="button" role="tab">
+                    <i class="bi bi-diagram-3"></i> Phylogenetic Tree
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">Add Species</button>
+                <button class="nav-link" id="research-tab" data-bs-toggle="tab" data-bs-target="#research" type="button" role="tab">
+                    <i class="bi bi-graph-up"></i> Research
+                </button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="import-export-tab" data-bs-toggle="tab" data-bs-target="#import-export" type="button" role="tab">Import/Export</button>
+                <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button" role="tab">
+                    <i class="bi bi-plus-circle"></i> Add Species
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="import-export-tab" data-bs-toggle="tab" data-bs-target="#import-export" type="button" role="tab">
+                    <i class="bi bi-arrow-down-up"></i> Import/Export
+                </button>
             </li>
         </ul>
         
@@ -43,7 +57,9 @@
                     <div class="col-md-6">
                         <div class="input-group">
                             <input type="text" id="search-input" class="form-control" placeholder="Search species...">
-                            <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                            <button class="btn btn-primary" type="button" id="search-button">
+                                <i class="bi bi-search"></i> Search
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -62,6 +78,13 @@
             <div class="tab-pane fade" id="phylo" role="tabpanel">
                 <div id="phylo-content">
                     <!-- Content loaded from phylo-tree.html -->
+                </div>
+            </div>
+
+            <!-- Research Tab -->
+            <div class="tab-pane fade" id="research" role="tabpanel">
+                <div id="research-content">
+                    <!-- Content loaded from research-tab.html -->
                 </div>
             </div>
 
@@ -97,6 +120,7 @@
     <script src="/static/js/species-manager.js"></script>
     <script src="/static/js/phylo-tree.js"></script>
     <script src="/static/js/tag-manager.js"></script>
+    <script src="/static/js/research-manager.js"></script>
     <script src="/static/js/import-export.js"></script>
     <script src="/static/js/modal-manager.js"></script>
     <script src="/static/js/main.js"></script>
